@@ -1,14 +1,14 @@
 import MainLayout from "../../layouts/MainLayout";
 
-const DashboardPage = () => {
+const AccountsPage = () => {
   return (
     <MainLayout>
       <div className="p-6">
         <div className="rounded-xl border border-border bg-card p-6 shadow-card">
-          <h1 className="text-3xl font-bold text-secondary">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-secondary">Account</h1>
 
           <p className="mt-2 text-muted">
-            Selamat datang di Cashbook WebBerkah.
+            Halaman account masih dalam pengembangan.
           </p>
         </div>
       </div>
@@ -16,4 +16,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default AccountsPage;

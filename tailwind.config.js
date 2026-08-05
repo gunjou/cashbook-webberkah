@@ -1,25 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
+
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
+
   theme: {
     extend: {
       colors: {
-        primary: "#CCD67F",
-        primaryDark: "#B7C45E",
+        primary: "var(--primary)",
+        "primary-hover": "var(--primary-hover)",
 
-        secondary: "#8A5F41",
-        secondaryLight: "#A77F60",
+        secondary: "var(--secondary)",
+        "secondary-hover": "var(--secondary-hover)",
 
-        beige: "#F3E4C9",
+        beige: "var(--beige)",
 
-        background: "#FAFAF8",
-        surface: "#FFFFFF",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        card: "var(--card)",
 
-        dark: {
-          background: "#161A14",
-          surface: "#1F241C",
-          card: "#262D22",
-        },
+        text: "var(--text)",
+        muted: "var(--muted)",
+
+        border: "var(--border)",
       },
 
       borderRadius: {
@@ -35,5 +38,6 @@ module.exports = {
       },
     },
   },
+
   plugins: [],
 };

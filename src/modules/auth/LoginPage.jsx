@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { login } from "./auth.service";
+
 import logo from "../../assets/logo.png";
-import swal from "../../lib/swal";
+
 import ButtonLoading from "../../components/ButtonLoading";
+import swal from "../../lib/swal";
+
+import { login } from "./auth.service";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -53,7 +57,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 py-10">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-card">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-card">
         <div className="mb-8 flex flex-col items-center">
           <img
             src={logo}
@@ -65,40 +69,47 @@ const LoginPage = () => {
             Cashbook WebBerkah
           </h1>
 
-          <p className="mt-2 text-center text-sm text-gray-500">
+          <p className="mt-2 text-center text-sm text-muted">
             Sistem Pencatatan Keuangan Internal
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-medium">Username</label>
+            <label className="mb-2 block text-sm font-medium text-text">
+              Username
+            </label>
 
             <input
               type="text"
               value={username}
+              disabled={loading}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Masukkan username"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+              className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium">Password</label>
+            <label className="mb-2 block text-sm font-medium text-text">
+              Password
+            </label>
 
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
+                disabled={loading}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30"
+                className="w-full rounded-lg border border-border bg-surface px-4 py-3 pr-12 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
               />
 
               <button
                 type="button"
+                disabled={loading}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition hover:text-secondary"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted transition hover:bg-primary/15 hover:text-secondary disabled:pointer-events-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -112,7 +123,8 @@ const LoginPage = () => {
           >
             {loading ? <ButtonLoading text="Memproses..." /> : "Masuk"}
           </button>
-          <div className="mt-8 text-center text-xs text-gray-500">
+
+          <div className="mt-8 text-center text-xs text-muted">
             © {new Date().getFullYear()} Outlook-Project. All rights reserved.
           </div>
         </form>
