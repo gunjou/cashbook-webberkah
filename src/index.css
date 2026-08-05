@@ -1,13 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =====================================================
+   Light Theme
+===================================================== */
+
+:root {
+  --color-primary: #ccd67f;
+  --color-primary-dark: #b7c45e;
+
+  --color-secondary: #8a5f41;
+  --color-secondary-light: #a77f60;
+
+  --color-beige: #f3e4c9;
+
+  --color-bg: #fafaf8;
+  --color-surface: #ffffff;
+
+  --color-text: #1f2937;
+  --color-text-muted: #6b7280;
+
+  --color-border: #e5e7eb;
+}
+
+/* =====================================================
+   Dark Theme
+===================================================== */
+
+.dark {
+  --color-bg: #161a14;
+  --color-surface: #1f241c;
+
+  --color-text: #f9fafb;
+  --color-text-muted: #b8b8b8;
+
+  --color-border: #3a4334;
+}
+
+/* =====================================================
+   Base
+===================================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* =====================================================
+   Scrollbar
+===================================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b7b7b7;
 }
