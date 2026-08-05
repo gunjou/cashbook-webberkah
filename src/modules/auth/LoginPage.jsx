@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import logo from "../../assets/logo.png";
 
-import ButtonLoading from "../../components/ButtonLoading";
+import Loading from "../../components/Loading";
 import swal from "../../lib/swal";
 
 import { login } from "./auth.service";
@@ -121,7 +121,7 @@ const LoginPage = () => {
             disabled={loading}
             className="flex w-full items-center justify-center rounded-lg bg-primary py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {loading ? <ButtonLoading text="Memproses..." /> : "Masuk"}
+            {loading ? <Loading.Button text="Memproses..." /> : "Masuk"}
           </button>
 
           <div className="mt-8 text-center text-xs text-muted">
