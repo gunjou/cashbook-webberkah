@@ -22,6 +22,9 @@ import AccountDetailModal from "./AccountDetailModal";
 import AccountAddModal from "./AccountAddModal";
 import AccountEditModal from "./AccountEditModal";
 import Loading from "../../components/Loading";
+import { exportAccountPDF } from "../../reports/pdf/account.report";
+import { getUser } from "../auth/auth.service";
+import { exportAccountExcel } from "../../reports/excel/account.report";
 
 const AccountsPage = () => {
   const [accounts, setAccounts] = useState([]);
@@ -38,6 +41,8 @@ const AccountsPage = () => {
   const [kind, setKind] = useState("");
 
   const exportRef = useRef(null);
+
+  const user = getUser();
 
   useEffect(() => {
     fetchAccounts();
@@ -185,13 +190,13 @@ const AccountsPage = () => {
   }, []);
 
   const handleExportPDF = () => {
-    console.log("Export PDF");
+    exportAccountPDF(filteredAccounts, user);
 
     setOpenExport(false);
   };
 
-  const handleExportExcel = () => {
-    console.log("Export Excel");
+  const handleExportExcel = async () => {
+    await exportAccountExcel(filteredAccounts, user);
 
     setOpenExport(false);
   };
@@ -227,7 +232,7 @@ const AccountsPage = () => {
               </button>
 
               {openExport && (
-                <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card">
+                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card sm:left-auto sm:right-0">
                   <button
                     onClick={handleExportPDF}
                     className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10 hover:text-red-600"

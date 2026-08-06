@@ -56,7 +56,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-secondary-hover via-muted to-text px-6 py-10">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-card">
         <div className="mb-8 flex flex-col items-center">
           <img
@@ -86,7 +86,7 @@ const LoginPage = () => {
               disabled={loading}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Masukkan username"
-              className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
             />
           </div>
 
@@ -102,7 +102,7 @@ const LoginPage = () => {
                 disabled={loading}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 pr-12 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-70"
+                className="w-full rounded-lg border border-border bg-surface px-4 py-3 pr-12 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
               />
 
               <button
