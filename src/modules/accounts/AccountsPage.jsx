@@ -264,41 +264,42 @@ const AccountsPage = () => {
 
         {/* Filter */}
 
-        <div className="rounded-xl border border-border bg-card p-4 shadow-card">
-          <div className="flex flex-col gap-3 lg:flex-row">
-            <div className="relative flex-1">
-              <Search
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-              />
+        {/* <div className="rounded-xl border border-border bg-card p-4 shadow-card"> */}
+        <div className="flex flex-col gap-3 lg:flex-row">
+          <div className="relative flex-1">
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+            />
 
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Cari account..."
-                className="w-full rounded-lg border border-border bg-surface py-3 pl-10 pr-4 text-text outline-none focus:border-primary"
-              />
-            </div>
-
-            <select
-              value={kind}
-              onChange={(e) => setKind(e.target.value)}
-              className="rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none focus:border-primary"
-            >
-              <option value="">Semua Jenis</option>
-              <option value="CASH">Cash</option>
-              <option value="BANK">Bank</option>
-              <option value="EWALLET">E-Wallet</option>
-            </select>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Cari account..."
+              className="w-full rounded-lg border border-border bg-surface py-3 pl-10 pr-4 text-text outline-none focus:border-primary"
+            />
           </div>
+
+          <select
+            value={kind}
+            onChange={(e) => setKind(e.target.value)}
+            className="rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none focus:border-primary"
+          >
+            <option value="">Semua Jenis</option>
+            <option value="CASH">Cash</option>
+            <option value="BANK">Bank</option>
+            <option value="EWALLET">E-Wallet</option>
+          </select>
         </div>
+        {/* </div> */}
 
         {/* Desktop Table */}
 
         <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-card lg:block">
           <table className="w-full">
-            <thead className="border-b border-border bg-surface">
+            <thead className="bg-secondary text-white">
+              {/* <thead className="border-b border-border bg-surface"> */}
               <tr className="text-center text-sm">
                 <th className="px-5 py-4">No</th>
                 <th className="px-5 py-4 text-left">Nama Account</th>
@@ -332,21 +333,21 @@ const AccountsPage = () => {
                   >
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       {index + 1}
                     </td>
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 text-left font-medium cursor-pointer"
+                      className="px-5 py-2 text-left font-medium cursor-pointer"
                     >
                       {account.account_name}
                     </td>
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -361,33 +362,33 @@ const AccountsPage = () => {
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       {account.bank_name ?? "-"}
                     </td>
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       {account.branch_name ?? "-"}
                     </td>
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       {account.account_number ?? "-"}
                     </td>
 
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
-                      className="px-5 py-4 cursor-pointer"
+                      className="px-5 py-2 cursor-pointer"
                     >
                       {account.account_holder ?? "-"}
                     </td>
 
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-2">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={(e) => {
