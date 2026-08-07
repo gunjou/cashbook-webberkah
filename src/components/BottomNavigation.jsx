@@ -20,6 +20,11 @@ const menus = [
     icon: ArrowLeftRight,
   },
   {
+    title: "Opening",
+    path: "/opening-balances",
+    icon: Wallet,
+  },
+  {
     title: "Account",
     path: "/accounts",
     icon: Landmark,
@@ -29,16 +34,12 @@ const menus = [
     path: "/categories",
     icon: Tags,
   },
-  {
-    title: "Opening",
-    path: "/opening-balances",
-    icon: Wallet,
-  },
 ];
 
 const BottomNavigation = () => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface lg:hidden">
+    // <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface lg:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface lg:hidden">
       <div className="grid grid-cols-5">
         {menus.map((menu) => {
           const Icon = menu.icon;
@@ -49,7 +50,7 @@ const BottomNavigation = () => {
                 <div
                   className={`flex flex-col items-center justify-center gap-1 py-3 transition ${
                     isActive
-                      ? "text-primary"
+                      ? "text-white bg-background rounded-b-lg"
                       : "text-muted hover:text-secondary"
                   }`}
                 >

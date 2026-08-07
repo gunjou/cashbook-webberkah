@@ -60,7 +60,7 @@ const AccountDetailModal = ({ accountId, onClose }) => {
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-muted transition hover:bg-primary/15 hover:text-secondary"
+            className="rounded-full p-2 transition text-secondary hover:bg-primary hover:text-white"
           >
             <X size={20} />
           </button>

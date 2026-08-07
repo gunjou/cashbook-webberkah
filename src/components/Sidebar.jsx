@@ -22,6 +22,11 @@ const menus = [
     icon: ArrowLeftRight,
   },
   {
+    title: "Opening Balance",
+    path: "/opening-balances",
+    icon: Wallet,
+  },
+  {
     title: "Account",
     path: "/accounts",
     icon: Landmark,
@@ -31,12 +36,6 @@ const menus = [
     title: "Kategori",
     path: "/categories",
     icon: Tags,
-    group: "Master",
-  },
-  {
-    title: "Opening Balance",
-    path: "/opening-balances",
-    icon: Wallet,
     group: "Master",
   },
 ];

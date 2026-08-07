@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 import { createLandscapeTemplate } from "./landscape.template";
 
 export const exportAccountPDF = (accounts, user) => {
+  // eslint-disable-next-line no-unused-vars
   const { doc, margin, pageWidth, startY, drawFooter, drawSignature } =
     createLandscapeTemplate({
       title: "Laporan Account",

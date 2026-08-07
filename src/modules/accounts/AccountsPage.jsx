@@ -219,7 +219,7 @@ const AccountsPage = () => {
             <div ref={exportRef} className="relative">
               <button
                 onClick={() => setOpenExport((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary/15"
+                className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
               >
                 <Download size={18} />
                 Export

@@ -11,6 +11,10 @@ import {
   User,
   LogOut,
 } from "lucide-react";
+import {
+  isCurrencyHidden,
+  toggleCurrencyHidden,
+} from "../utils/currency-visibility";
 
 const Navbar = ({
   sidebarOpen,
@@ -23,6 +27,10 @@ const Navbar = ({
   onLogout,
 }) => {
   const [openProfile, setOpenProfile] = useState(false);
+  const [hidden, setHidden] = useState(isCurrencyHidden());
+  const handleToggleCurrency = () => {
+    setHidden(toggleCurrencyHidden());
+  };
 
   const dropdownRef = useRef(null);
 
@@ -59,11 +67,11 @@ const Navbar = ({
 
       <div className="flex items-center gap-2 lg:gap-3">
         <button
-          onClick={toggleHideAmount}
+          onClick={handleToggleCurrency}
           className="rounded-lg p-2 text-text transition hover:bg-primary-hover hover:text-white"
           title={hideAmount ? "Tampilkan Saldo" : "Sembunyikan Saldo"}
         >
-          {hideAmount ? <EyeOff size={20} /> : <Eye size={20} />}
+          {hidden ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
 
         <button
