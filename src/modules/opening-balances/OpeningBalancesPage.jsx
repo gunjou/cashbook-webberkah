@@ -16,6 +16,7 @@ import Loading from "../../components/Loading";
 
 import {
   createOpeningBalance,
+  generateOpeningBalance,
   getOpeningBalanceDisplay,
   updateOpeningBalance,
 } from "./opening-balance.service";
@@ -23,6 +24,7 @@ import OpeningBalanceCard from "./OpeningBalanceCard";
 import OpeningBalanceAddModal from "./OpeningBalanceAddModal";
 import OpeningBalanceEditModal from "./OpeningBalanceEditModal";
 import OpeningBalanceHistoryModal from "./OpeningBalanceHistoryModal";
+import OpeningBalanceGenerateModal from "./OpeningBalanceGenerateModal";
 
 const OpeningBalancePage = () => {
   const exportRef = useRef(null);
@@ -35,6 +37,8 @@ const OpeningBalancePage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingOpeningBalanceId, setEditingOpeningBalanceId] = useState(null);
   const [selectedAccountId, setSelectedAccountId] = useState(null);
+
+  const [generateOpen, setGenerateOpen] = useState(false);
 
   useEffect(() => {
     fetchOpeningBalances();
@@ -86,10 +90,6 @@ const OpeningBalancePage = () => {
     setOpenExport(false);
   };
 
-  const handleGenerate = () => {
-    console.log("Generate Opening Balance");
-  };
-
   const handleCreate = async (payload) => {
     try {
       await createOpeningBalance(payload);
@@ -122,6 +122,28 @@ const OpeningBalancePage = () => {
         icon: "success",
         title: "Berhasil",
         text: "Opening Balance berhasil diperbarui.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: error.response?.data?.message ?? "Terjadi kesalahan.",
+      });
+    }
+  };
+
+  const handleGenerate = async (payload) => {
+    try {
+      await generateOpeningBalance(payload);
+      setGenerateOpen(false);
+      await fetchOpeningBalances();
+
+      swal.fire({
+        icon: "success",
+        title: "Berhasil",
+        text: "Opening Balance berhasil digenerate.",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -190,7 +212,7 @@ const OpeningBalancePage = () => {
             {/* Generate */}
 
             <button
-              onClick={handleGenerate}
+              onClick={() => setGenerateOpen(true)}
               className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 font-semibold text-white transition hover:opacity-90"
             >
               <WandSparkles size={18} />
@@ -310,12 +332,11 @@ const OpeningBalancePage = () => {
       {/* =========================
           Generate
       ========================= */}
-      {/*
       <OpeningBalanceGenerateModal
-        open={openGenerateModal}
-        onClose={() => setOpenGenerateModal(false)}
+        open={generateOpen}
+        onClose={() => setGenerateOpen(false)}
+        onSave={handleGenerate}
       />
-      */}
     </MainLayout>
   );
 };

@@ -44,3 +44,15 @@ export const updateOpeningBalance = async (idOpeningBalance, payload) => {
 
   return response.data;
 };
+
+/* ==========================
+   GENERATE OPENING BALANCE
+========================== */
+export const generateOpeningBalance = async (payload) => {
+  const response = await api.post(
+    "/cashbook/opening-balance/generate",
+    payload,
+  );
+
+  return response.data.data;
+};

@@ -531,7 +531,7 @@ const TransactionPage = () => {
   };
 
   const handleSuccess = () => {
-    window.location.href = "/transactions";
+    loadTransactions(getCurrentFilter());
   };
 
   /* =======================================================

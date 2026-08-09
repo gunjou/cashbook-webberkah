@@ -19,6 +19,7 @@ import {
 } from "./transaction.service";
 
 import { formatCurrencyInput, parseCurrencyInput } from "../../utils/currency";
+import swal from "../../lib/swal";
 
 /* ==========================
     Initial Form
@@ -233,6 +234,20 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
 
       onSuccess?.();
       onClose?.();
+
+      swal.fire({
+        icon: "success",
+        title: "Berhasil",
+        text: "Transaksi berhasil ditambahkan.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      swal.fire({
+        icon: "error",
+        title: "Gagal",
+        text: error.response?.data?.message ?? "Terjadi kesalahan.",
+      });
     } finally {
       setSaving(false);
     }
