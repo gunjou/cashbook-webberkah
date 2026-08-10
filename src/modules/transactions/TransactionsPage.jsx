@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  ArrowLeftRight,
   CalendarDays,
   ChevronDown,
   Download,
+  Landmark,
   Plus,
   Search,
+  Tag,
 } from "lucide-react";
 
 import MainLayout from "../../layouts/MainLayout";
@@ -22,6 +25,7 @@ import {
   getCategoryDropdown,
   getTransactions,
 } from "./transaction.service";
+import TransactionTransferModal from "./TransactionTransferModal";
 
 /* =========================================================
  * Constants
@@ -125,7 +129,13 @@ const CustomPeriodDropdown = ({
       </button>
 
       {open && (
-        <div className="absolute left-0 z-20 mt-2 w-72 rounded-xl border border-border bg-card p-4 shadow-card">
+        <div
+          className="
+            absolute z-20 mt-2 w-72 rounded-xl border border-border bg-card p-4 shadow-card
+            left-1/2 -translate-x-1/2
+            sm:left-0 sm:translate-x-0
+          "
+        >
           <div className="space-y-4">
             <div>
               <label className="mb-1 block text-xs text-muted">
@@ -212,7 +222,7 @@ const EmptyTransactionReceipt = () => {
   );
 };
 
-const TransactionHeader = ({ onAddTransaction }) => {
+const TransactionHeader = ({ onAddTransaction, onAddTransfer }) => {
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div>
@@ -236,11 +246,21 @@ const TransactionHeader = ({ onAddTransaction }) => {
           </button>
         </div>
 
+        {/* Transfer Antar account */}
+        <button
+          type="button"
+          onClick={onAddTransfer}
+          className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+        >
+          <ArrowLeftRight size={18} />
+          Transfer
+        </button>
+
         {/* Add Transaction */}
         <button
           type="button"
           onClick={onAddTransaction}
-          className="flex items-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-white transition hover:opacity-90"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
         >
           <Plus size={18} />
           Tambah Transaksi
@@ -320,34 +340,50 @@ const TransactionFilters = ({
       </div>
 
       {/* Account */}
-      <select
-        value={selectedAccount}
-        onChange={(event) => onAccountChange(event.target.value)}
-        className="rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none transition focus:border-primary"
-      >
-        <option value="">Semua Account</option>
 
-        {accounts.map((account) => (
-          <option key={account.id_account} value={account.id_account}>
-            {account.account_name}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <Landmark
+          size={16}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+        />
+
+        <select
+          value={selectedAccount}
+          onChange={(event) => onAccountChange(event.target.value)}
+          className="w-[160px] appearance-none rounded-lg border border-border bg-surface py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+        >
+          <option value="">All Account</option>
+
+          {accounts.map((account) => (
+            <option key={account.id_account} value={account.id_account}>
+              {account.account_name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* Category */}
-      <select
-        value={selectedCategory}
-        onChange={(event) => onCategoryChange(event.target.value)}
-        className="rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none transition focus:border-primary"
-      >
-        <option value="">Semua Kategori</option>
 
-        {categories.map((category) => (
-          <option key={category.id_category} value={category.id_category}>
-            {category.name}
-          </option>
-        ))}
-      </select>
+      <div className="relative">
+        <Tag
+          size={16}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+        />
+
+        <select
+          value={selectedCategory}
+          onChange={(event) => onCategoryChange(event.target.value)}
+          className="w-[160px] appearance-none rounded-lg border border-border bg-surface py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+        >
+          <option value="">All Kategori</option>
+
+          {categories.map((category) => (
+            <option key={category.id_category} value={category.id_category}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
@@ -398,6 +434,7 @@ const TransactionPage = () => {
   const [openAttachment, setOpenAttachment] = useState(false);
   const [openDetail, setOpenDetail] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -656,7 +693,10 @@ const TransactionPage = () => {
     <MainLayout>
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
-        <TransactionHeader onAddTransaction={() => setOpenAddModal(true)} />
+        <TransactionHeader
+          onAddTransaction={() => setOpenAddModal(true)}
+          onAddTransfer={() => setTransferOpen(true)}
+        />
 
         {/* Filters */}
         <TransactionFilters
@@ -729,6 +769,13 @@ const TransactionPage = () => {
       <TransactionAddModal
         open={openAddModal}
         onClose={() => setOpenAddModal(false)}
+        onSuccess={handleSuccess}
+      />
+
+      {/* Add Transfer Modal */}
+      <TransactionTransferModal
+        open={transferOpen}
+        onClose={() => setTransferOpen(false)}
         onSuccess={handleSuccess}
       />
 

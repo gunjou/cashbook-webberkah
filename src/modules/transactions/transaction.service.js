@@ -91,3 +91,16 @@ export const uploadAttachment = async (file) => {
 
   return response.data;
 };
+
+/* ==========================
+   ACCOUNT TRANSFER
+========================== */
+
+export const transferBetweenAccounts = async (payload) => {
+  const response = await api.post(
+    "/cashbook/transactions/account-transfer",
+    payload,
+  );
+
+  return response.data;
+};
