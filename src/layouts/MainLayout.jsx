@@ -6,11 +6,14 @@ import BottomNavigation from "../components/BottomNavigation";
 
 import swal from "../lib/swal";
 import { getUser, logout } from "../modules/auth/auth.service";
+import FloatingActionButton from "../components/FloatingActionButton";
+import TransactionAddModal from "../modules/transactions/TransactionAddModal";
 
 const MainLayout = ({ children }) => {
   const user = getUser();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [openAddTransaction, setOpenAddTransaction] = useState(false);
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("dark_mode") === "true",
@@ -89,6 +92,13 @@ const MainLayout = ({ children }) => {
           {children}
         </main>
       </div>
+
+      <FloatingActionButton onClick={() => setOpenAddTransaction(true)} />
+
+      <TransactionAddModal
+        open={openAddTransaction}
+        onClose={() => setOpenAddTransaction(false)}
+      />
 
       <BottomNavigation />
     </div>
