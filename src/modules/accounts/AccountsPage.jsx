@@ -232,7 +232,7 @@ const AccountsPage = () => {
               </button>
 
               {openExport && (
-                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card sm:left-auto sm:right-0">
+                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card ">
                   <button
                     onClick={handleExportPDF}
                     className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10 hover:text-red-600"
@@ -241,13 +241,15 @@ const AccountsPage = () => {
                     Export .pdf
                   </button>
 
-                  <button
-                    onClick={handleExportExcel}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-green-600 transition hover:bg-green-500/10 hover:text-green-600"
-                  >
-                    <RiFileExcel2Line size={18} />
-                    Export .xlsx
-                  </button>
+                  {false && (
+                    <button
+                      onClick={handleExportExcel}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm text-green-600 transition hover:bg-green-500/10 hover:text-green-600"
+                    >
+                      <RiFileExcel2Line size={18} />
+                      Export .xlsx
+                    </button>
+                  )}
                 </div>
               )}
             </div>

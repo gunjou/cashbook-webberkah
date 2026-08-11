@@ -9,6 +9,8 @@ import Loading from "../../components/Loading";
 import { getOpeningBalanceHistory } from "./opening-balance.service";
 import { formatCurrency } from "../../utils/currency";
 import { formatPeriod } from "../../utils/date";
+import { exportOpeningBalanceHistoryPDF } from "../../reports/pdf/history-opening-balance.report";
+import { getUser } from "../auth/auth.service";
 
 const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
   const exportRef = useRef(null);
@@ -56,7 +58,9 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
   if (!accountId) return null;
 
   const handleExportPDF = () => {
-    console.log("Export PDF");
+    const user = getUser();
+    exportOpeningBalanceHistoryPDF(history, user);
+
     setOpenExport(false);
   };
 
@@ -128,13 +132,15 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
                   Export PDF
                 </button>
 
-                <button
-                  onClick={handleExportExcel}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-green-600 hover:bg-green-500/10 hover:text-green-600"
-                >
-                  <RiFileExcel2Line size={18} />
-                  Export Excel
-                </button>
+                {false && (
+                  <button
+                    onClick={handleExportExcel}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-green-600 hover:bg-green-500/10 hover:text-green-600"
+                  >
+                    <RiFileExcel2Line size={18} />
+                    Export Excel
+                  </button>
+                )}
               </div>
             )}
           </div>

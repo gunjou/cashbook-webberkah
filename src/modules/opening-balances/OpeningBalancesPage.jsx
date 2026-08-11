@@ -25,6 +25,8 @@ import OpeningBalanceAddModal from "./OpeningBalanceAddModal";
 import OpeningBalanceEditModal from "./OpeningBalanceEditModal";
 import OpeningBalanceHistoryModal from "./OpeningBalanceHistoryModal";
 import OpeningBalanceGenerateModal from "./OpeningBalanceGenerateModal";
+import { exportOpeningBalancePDF } from "../../reports/pdf/opening-balance.report";
+import { getUser } from "../auth/auth.service";
 
 const OpeningBalancePage = () => {
   const exportRef = useRef(null);
@@ -81,7 +83,9 @@ const OpeningBalancePage = () => {
   });
 
   const handleExportPDF = () => {
-    console.log("Export PDF");
+    const user = getUser();
+    exportOpeningBalancePDF(openingBalances, user);
+
     setOpenExport(false);
   };
 
@@ -198,13 +202,15 @@ const OpeningBalancePage = () => {
                     Export PDF
                   </button>
 
-                  <button
-                    onClick={handleExportExcel}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-green-600 hover:bg-green-600/10 hover:text-green-600"
-                  >
-                    <RiFileExcel2Line size={18} />
-                    Export Excel
-                  </button>
+                  {false && (
+                    <button
+                      onClick={handleExportExcel}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-green-600 hover:bg-green-600/10 hover:text-green-600"
+                    >
+                      <RiFileExcel2Line size={18} />
+                      Export Excel
+                    </button>
+                  )}
                 </div>
               )}
             </div>
@@ -213,7 +219,7 @@ const OpeningBalancePage = () => {
 
             <button
               onClick={() => setGenerateOpen(true)}
-              className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
             >
               <WandSparkles size={18} />
               Generate
@@ -223,7 +229,7 @@ const OpeningBalancePage = () => {
 
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
             >
               <Plus size={18} />
               Tambah Manual

@@ -26,6 +26,10 @@ import {
   getTransactions,
 } from "./transaction.service";
 import TransactionTransferModal from "./TransactionTransferModal";
+import { getUser } from "../auth/auth.service";
+import { exportTransactionPDF } from "../../reports/pdf/transaction.report";
+import { FaRegFilePdf } from "react-icons/fa";
+import { RiFileExcel2Line } from "react-icons/ri";
 
 /* =========================================================
  * Constants
@@ -222,7 +226,15 @@ const EmptyTransactionReceipt = () => {
   );
 };
 
-const TransactionHeader = ({ onAddTransaction, onAddTransfer }) => {
+const TransactionHeader = ({
+  exportRef,
+  openExport,
+  onToggleExport,
+  onExportPDF,
+  onExportExcel,
+  onAddTransaction,
+  onAddTransfer,
+}) => {
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div>
@@ -235,15 +247,50 @@ const TransactionHeader = ({ onAddTransaction, onAddTransfer }) => {
 
       <div className="flex flex-wrap gap-3">
         {/* Export */}
-        <div className="relative">
+        <div ref={exportRef} className="relative">
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium transition hover:bg-primary hover:text-white"
+            onClick={onToggleExport}
+            aria-expanded={openExport}
+            aria-haspopup="menu"
+            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
           >
             <Download size={18} />
             Export
-            <ChevronDown size={16} />
+            <ChevronDown
+              size={16}
+              className={`transition ${openExport ? "rotate-180" : ""}`}
+            />
           </button>
+
+          {openExport && (
+            <div
+              role="menu"
+              className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card"
+            >
+              <button
+                type="button"
+                role="menuitem"
+                onClick={onExportPDF}
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10"
+              >
+                <FaRegFilePdf size={18} />
+                Export PDF
+              </button>
+
+              {false && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={onExportExcel}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-sm text-green-600 transition hover:bg-green-500/10"
+                >
+                  <RiFileExcel2Line size={18} />
+                  Export Excel
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Transfer Antar account */}
@@ -398,6 +445,7 @@ const TransactionPage = () => {
    * ----------------------------------------------------- */
 
   const customRef = useRef(null);
+  const exportRef = useRef(null);
 
   /* -------------------------------------------------------
    * Filter State
@@ -436,6 +484,7 @@ const TransactionPage = () => {
   const [openAddModal, setOpenAddModal] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [openExport, setOpenExport] = useState(false);
 
   const [selectedTransaction, setSelectedTransaction] = useState(null);
 
@@ -462,11 +511,8 @@ const TransactionPage = () => {
   const loadTransactions = async (params = {}) => {
     try {
       setLoading(true);
-
       const data = await getTransactions(params);
-
       setSummary(data.summary);
-
       setReceipts(data.accounts.filter((item) => item.transaction_count > 0));
     } finally {
       setLoading(false);
@@ -539,6 +585,10 @@ const TransactionPage = () => {
       if (customRef.current && !customRef.current.contains(event.target)) {
         setOpenCustomPeriod(false);
       }
+
+      if (exportRef.current && !exportRef.current.contains(event.target)) {
+        setOpenExport(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -569,6 +619,36 @@ const TransactionPage = () => {
 
   const handleSuccess = () => {
     loadTransactions(getCurrentFilter());
+  };
+
+  const handleToggleExport = () => {
+    setOpenExport((previous) => !previous);
+  };
+
+  const handleExportPDF = () => {
+    const user = getUser();
+    const filters = getCurrentFilter();
+
+    const selected = accounts.find(
+      (item) => item.id_account === Number(selectedAccount),
+    );
+
+    exportTransactionPDF(receipts, user, {
+      period: activeFilter,
+      date_from: filters.date_from,
+      date_to: filters.date_to,
+      account_name: selected?.account_name ?? null,
+    });
+
+    setOpenExport(false);
+  };
+
+  const handleExportExcel = () => {
+    // TODO: sambungkan ke service export Excel.
+    // Gunakan getCurrentFilter() agar hasil export mengikuti filter aktif.
+    const params = getCurrentFilter();
+    console.log("Export Excel", params);
+    setOpenExport(false);
   };
 
   /* =======================================================
@@ -694,6 +774,11 @@ const TransactionPage = () => {
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <TransactionHeader
+          exportRef={exportRef}
+          openExport={openExport}
+          onToggleExport={handleToggleExport}
+          onExportPDF={handleExportPDF}
+          onExportExcel={handleExportExcel}
           onAddTransaction={() => setOpenAddModal(true)}
           onAddTransfer={() => setTransferOpen(true)}
         />

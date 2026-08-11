@@ -99,5 +99,5 @@ export const exportAccountPDF = (accounts, user) => {
 
   drawFooter();
 
-  doc.save("Laporan_Account.pdf");
+  doc.save("Laporan List Account.pdf");
 };
