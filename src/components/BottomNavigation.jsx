@@ -4,6 +4,7 @@ import {
   Landmark,
   Tags,
   Wallet,
+  ClipboardList,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -25,6 +26,11 @@ const menus = [
     icon: Wallet,
   },
   {
+    title: "Pengajuan",
+    path: "/purchase-requests",
+    icon: ClipboardList,
+  },
+  {
     title: "Account",
     path: "/accounts",
     icon: Landmark,
@@ -40,7 +46,7 @@ const BottomNavigation = () => {
   return (
     // <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface lg:hidden">
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface lg:hidden">
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-6">
         {menus.map((menu) => {
           const Icon = menu.icon;
 

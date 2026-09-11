@@ -4,6 +4,7 @@ import {
   Landmark,
   Tags,
   Wallet,
+  ClipboardList,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -25,6 +26,11 @@ const menus = [
     title: "Opening Balance",
     path: "/opening-balances",
     icon: Wallet,
+  },
+  {
+    title: "Pengajuan",
+    path: "/purchase-requests",
+    icon: ClipboardList,
   },
   {
     title: "Account",

@@ -13,6 +13,7 @@ import CategoriesPage from "./modules/categories/CategoriesPage";
 import OpeningBalancesPage from "./modules/opening-balances/OpeningBalancesPage";
 
 import NotFoundPage from "./modules/not-found/NotFoundPage";
+import PurchaseRequestsPage from "./modules/purchase-requests/PurchaseRequestsPage";
 
 const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) return <Navigate to="/login" replace />;
@@ -78,6 +79,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <OpeningBalancesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/purchase-requests"
+          element={
+            <ProtectedRoute>
+              <PurchaseRequestsPage />
             </ProtectedRoute>
           }
         />
