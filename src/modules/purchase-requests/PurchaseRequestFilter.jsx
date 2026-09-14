@@ -23,7 +23,7 @@ const PurchaseRequestFilter = ({
   return (
     <div className="rounded-xl border border-border bg-card p-3 shadow-card">
       <div className="flex flex-col gap-2 lg:flex-row">
-        <div className="flex shrink-0 items-center gap-1 overflow-x-auto rounded-xl border border-border bg-surface p-1">
+        <div className="flex w-full max-w-full flex-wrap items-center gap-1 rounded-xl border border-border bg-surface p-1 lg:w-auto lg:shrink-0">
           {statusTabs.map((tab) => {
             const isActive = filter.status === tab.value;
 

@@ -76,14 +76,15 @@ const PurchaseRequestTable = ({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
-      <div className="max-h-[calc(100vh-320px)] overflow-auto">
-        <table className="w-full min-w-[1100px]">
+    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="max-h-[calc(100vh-320px)] w-full min-w-0 max-w-full overflow-x-auto overflow-y-auto">
+        <table className="w-max min-w-[1100px] md:w-full md:min-w-0">
           <thead className="sticky top-0 z-20">
             <tr className="border-b border-border bg-surface">
               <th className="w-12 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 No
               </th>
+
               <th className="w-44 px-4 py-4 text-left">
                 <button
                   type="button"
@@ -99,12 +100,15 @@ const PurchaseRequestTable = ({
                     ))}
                 </button>
               </th>
+
               <th className="w-44 px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Pemohon
               </th>
+
               <th className="min-w-[280px] px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Pekerjaan
               </th>
+
               <th className="w-32 px-4 py-4 text-center">
                 <button
                   type="button"
@@ -120,12 +124,15 @@ const PurchaseRequestTable = ({
                     ))}
                 </button>
               </th>
+
               <th className="w-36 px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Total
               </th>
+
               <th className="w-32 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Status
               </th>
+
               <th className="w-24 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Aksi
               </th>
@@ -135,6 +142,7 @@ const PurchaseRequestTable = ({
           <tbody className="divide-y divide-border">
             {data.map((item, index) => {
               const status = STATUS_STYLE[item.status] || STATUS_STYLE.ACTIVE;
+
               const priority =
                 PRIORITY_STYLE[item.priority] || PRIORITY_STYLE.NORMAL;
 
@@ -160,6 +168,7 @@ const PurchaseRequestTable = ({
                       <span className="text-[10px] font-medium text-muted">
                         {item.request_number || "-"}
                       </span>
+
                       <span className="text-xs font-semibold text-secondary">
                         {formatDate(item.tanggal_request)}
                       </span>
@@ -176,10 +185,12 @@ const PurchaseRequestTable = ({
                           {getInitials(item.nama_pegawai)}
                         </span>
                       </div>
+
                       <div className="min-w-0">
                         <p className="truncate text-xs font-semibold text-text">
                           {item.nama_panggilan || "-"}
                         </p>
+
                         <span className="mt-1 inline-block rounded-md bg-primary/10 px-2 py-1 text-[9px] font-medium text-secondary">
                           {item.nama_departemen || "-"}
                         </span>
@@ -195,6 +206,7 @@ const PurchaseRequestTable = ({
                       <p className="text-xs font-semibold leading-5 text-text">
                         {item.nama_pekerjaan || "-"}
                       </p>
+
                       {item.note && (
                         <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted">
                           {item.note}
@@ -208,7 +220,7 @@ const PurchaseRequestTable = ({
                     className="cursor-pointer px-4 py-4 text-center"
                   >
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] uppercase font-bold whitespace-nowrap ${priority.className}`}
+                      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[9px] font-bold uppercase ${priority.className}`}
                     >
                       <Flag size={13} />
                       {priority.label}
@@ -236,24 +248,16 @@ const PurchaseRequestTable = ({
                   </td>
 
                   <td className="px-4 py-4 text-center">
-                    {/* <button
-                      type="button"
-                      onClick={() => onDetail?.(item.id_request)}
-                      title="Detail"
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-secondary transition hover:bg-primary hover:text-white"
-                    >
-                      <Eye size={16} />
-                    </button> */}
-
                     {item.status === "APPROVED" && (
                       <button
                         type="button"
                         onClick={() => onPaid(item)}
-                        className="flex py-1.5 px-2.5 items-center justify-center rounded-lg text-white bg-secondary transition-all hover:bg-secondary-hover"
+                        className="flex items-center justify-center rounded-lg bg-secondary px-2.5 py-1.5 text-white transition-all hover:bg-secondary-hover"
                         title="Tandai Bayar"
                       >
                         <div className="flex gap-1">
                           <CheckCircle2 size={16} />
+
                           <span className="text-[11px]">BAYAR</span>
                         </div>
                       </button>

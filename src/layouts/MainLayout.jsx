@@ -73,10 +73,10 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen min-w-0 overflow-hidden bg-background">
       <Sidebar sidebarOpen={sidebarOpen} />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Navbar
           sidebarOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
@@ -88,7 +88,7 @@ const MainLayout = ({ children }) => {
           onLogout={handleLogout}
         />
 
-        <main className="flex-1 overflow-y-auto bg-background pb-20 lg:pb-0">
+        <main className="min-w-0 flex-1 overflow-y-auto bg-background pb-20 lg:pb-0">
           {children}
         </main>
       </div>

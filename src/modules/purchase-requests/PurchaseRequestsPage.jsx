@@ -325,7 +325,7 @@ const PurchaseRequestsPage = () => {
 
   return (
     <MainLayout>
-      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="space-y-6 p-6">
         {/* Header */}
 
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
