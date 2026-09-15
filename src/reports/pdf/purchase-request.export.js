@@ -713,7 +713,7 @@ export const exportPurchaseRequestsPDF = (
 
       lines.forEach((line) => {
         if (line.type === "spacer") {
-          textY += 2.5;
+          textY += 1.2;
 
           return;
         }
