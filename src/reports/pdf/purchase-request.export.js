@@ -44,26 +44,31 @@ const STATUS_STYLE = {
     light: "#CA8A04",
     dark: "#FACC15",
   },
+
   REVIEWED: {
     label: "Reviewed",
     light: "#059669",
     dark: "#12a878",
   },
+
   APPROVED: {
     label: "Approved",
     light: "#16A34A",
     dark: "#7CE9A4",
   },
+
   REJECTED: {
     label: "Rejected",
     light: "#B91C1C",
     dark: "#FCA5A5",
   },
+
   PAID: {
     label: "Paid",
     light: "#0284C7",
     dark: "#7DD3FC",
   },
+
   ACTIVE: {
     label: "Aktif",
     light: "#A91D24",
@@ -77,11 +82,13 @@ const PRIORITY_STYLE = {
     light: "#52525B",
     dark: "#A1A1AA",
   },
+
   URGENT: {
     label: "Urgent",
     light: "#B45309",
     dark: "#FCD34D",
   },
+
   TOP_URGENT: {
     label: "Top Urgent",
     light: "#B91C1C",
@@ -98,6 +105,34 @@ const hexToRgb = (hex) => {
     b: value & 255,
   };
 };
+
+// =========================
+// FORMAT ITEM
+// =========================
+
+const formatItems = (items = []) => {
+  if (!Array.isArray(items) || items.length === 0) {
+    return [];
+  }
+
+  return items.flatMap((item, index) => {
+    const itemNo = item.item_no || index + 1;
+    const keterangan = item.keterangan || "-";
+    const jumlah = item.jumlah ?? 0;
+    const unit = item.unit || "";
+    const hargaSatuan = formatCurrency(item.harga_satuan);
+    const total = formatCurrency(item.total);
+
+    return [
+      `${itemNo}. ${keterangan}`,
+      `   ${jumlah} ${unit} × ${hargaSatuan} = ${total}`,
+    ];
+  });
+};
+
+// =========================
+// EXPORT PDF
+// =========================
 
 export const exportPurchaseRequestsPDF = (
   data = [],
@@ -116,7 +151,15 @@ export const exportPurchaseRequestsPDF = (
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
+
+  // =========================
+  // MARGIN HEADER & TABLE
+  // =========================
+
   const margin = 12;
+
+  const contentWidth = pageWidth - margin * 2;
+
   const logoPath = "/images/logo_original.png";
 
   // =========================
@@ -165,9 +208,11 @@ export const exportPurchaseRequestsPDF = (
 
   doc.setDrawColor(44, 33, 41);
   doc.setLineWidth(0.5);
+
   doc.line(margin, 30, pageWidth - margin, 30);
 
   doc.setLineWidth(0.1);
+
   doc.line(margin, 31, pageWidth - margin, 31);
 
   // =========================
@@ -194,21 +239,13 @@ export const exportPurchaseRequestsPDF = (
 
   let filterX = margin;
 
-  //   if (filters.status) {
-  //     doc.setFont("helvetica", "bold");
-  //     doc.text("STATUS", filterX, infoY);
-
-  //     doc.setFont("helvetica", "normal");
-  //     doc.text(`: ${getStatusLabel(filters.status)}`, filterX + 18, infoY);
-
-  //     filterX += 65;
-  //   }
-
   if (filters.departemen) {
     doc.setFont("helvetica", "bold");
+
     doc.text("DEPARTEMEN", filterX, infoY);
 
     doc.setFont("helvetica", "normal");
+
     doc.text(`: ${filters.departemen}`, filterX + 27, infoY);
 
     filterX += 85;
@@ -216,6 +253,7 @@ export const exportPurchaseRequestsPDF = (
 
   if (filters.tanggal_mulai || filters.tanggal_selesai) {
     doc.setFont("helvetica", "bold");
+
     doc.text("PERIODE", filterX, infoY);
 
     let periode = "-";
@@ -231,12 +269,14 @@ export const exportPurchaseRequestsPDF = (
     }
 
     doc.setFont("helvetica", "normal");
+
     doc.text(`: ${periode}`, filterX + 19, infoY);
   }
 
   // =========================
   // TABLE
   // =========================
+
   autoTable(doc, {
     startY:
       filters.departemen || filters.tanggal_mulai || filters.tanggal_selesai
@@ -249,26 +289,37 @@ export const exportPurchaseRequestsPDF = (
         "NO. PENGAJUAN",
         "TANGGAL",
         "PEMOHON",
-        "PEKERJAAN",
+        "PEKERJAAN & ITEM",
         "PRIORITY",
         "TOTAL",
         "STATUS",
       ],
     ],
 
-    body: data.map((item, index) => [
-      String(index + 1).padStart(2, "0"),
-      item.request_number || "-",
-      formatDate(item.tanggal_request),
-      item.nama_pegawai ||
-        item.nama_panggilan ||
-        item.pegawai?.nama_panggilan ||
-        "-",
-      item.nama_pekerjaan || "-",
-      getPriorityLabel(item.priority),
-      formatCurrency(item.total_amount),
-      getStatusLabel(item.status),
-    ]),
+    body: data.map((item, index) => {
+      const items = formatItems(item.items);
+
+      return [
+        String(index + 1).padStart(2, "0"),
+
+        item.request_number || "-",
+
+        formatDate(item.tanggal_request),
+
+        item.nama_pegawai ||
+          item.nama_panggilan ||
+          item.pegawai?.nama_panggilan ||
+          "-",
+
+        [item.nama_pekerjaan || "-", ...items],
+
+        getPriorityLabel(item.priority),
+
+        formatCurrency(item.total_amount),
+
+        getStatusLabel(item.status),
+      ];
+    }),
 
     theme: "striped",
 
@@ -276,15 +327,19 @@ export const exportPurchaseRequestsPDF = (
       font: "helvetica",
       fontSize: 7,
       textColor: [55, 55, 55],
+
       cellPadding: {
-        top: 2.5,
-        right: 2,
-        bottom: 2.5,
-        left: 2,
+        top: 3,
+        right: 2.5,
+        bottom: 3,
+        left: 2.5,
       },
+
       lineColor: [220, 220, 220],
       lineWidth: 0.1,
+
       valign: "middle",
+      overflow: "linebreak",
     },
 
     // =========================
@@ -298,9 +353,10 @@ export const exportPurchaseRequestsPDF = (
       fontStyle: "bold",
       halign: "center",
       valign: "middle",
+
       cellPadding: {
-        top: 3,
-        bottom: 3,
+        top: 3.5,
+        bottom: 3.5,
         left: 2,
         right: 2,
       },
@@ -309,6 +365,7 @@ export const exportPurchaseRequestsPDF = (
     bodyStyles: {
       fontSize: 7,
       valign: "middle",
+      minCellHeight: 12,
     },
 
     alternateRowStyles: {
@@ -317,6 +374,8 @@ export const exportPurchaseRequestsPDF = (
 
     // =========================
     // COLUMN WIDTH
+    // TOTAL = 273 MM
+    // SESUAI MARGIN 12 MM
     // =========================
 
     columnStyles: {
@@ -324,27 +383,41 @@ export const exportPurchaseRequestsPDF = (
         cellWidth: 10,
         halign: "center",
       },
+
       1: {
-        cellWidth: 31,
-      },
-      2: {
-        cellWidth: 25,
-        halign: "center",
-      },
-      3: {
-        cellWidth: 39,
-      },
-      4: {
-        cellWidth: 72,
-      },
-      5: {
         cellWidth: 29,
+      },
+
+      2: {
+        cellWidth: 24,
         halign: "center",
       },
-      6: {
-        cellWidth: 39,
-        halign: "right",
+
+      // PEMOHON DIKURANGI
+      3: {
+        cellWidth: 29,
       },
+
+      // PEKERJAAN DIPERLUAS
+      4: {
+        cellWidth: 89,
+        halign: "left",
+        valign: "top",
+      },
+
+      5: {
+        cellWidth: 27,
+        halign: "center",
+      },
+
+      // TOTAL
+      6: {
+        cellWidth: 37,
+        halign: "right",
+        fontStyle: "bold",
+        fontSize: 9,
+      },
+
       7: {
         cellWidth: 28,
         halign: "center",
@@ -352,13 +425,14 @@ export const exportPurchaseRequestsPDF = (
     },
 
     margin: {
+      top: 10,
       left: margin,
       right: margin,
-      bottom: 15,
+      bottom: 20,
     },
 
     // =========================
-    // HIGHLIGHT PRIORITY & STATUS
+    // PARSE CELL
     // =========================
 
     didParseCell: (hookData) => {
@@ -366,7 +440,55 @@ export const exportPurchaseRequestsPDF = (
 
       const rowData = data[hookData.row.index];
 
+      // =========================
+      // PEKERJAAN & ITEM
+      // =========================
+
+      if (hookData.column.index === 4) {
+        const items = Array.isArray(rowData.items) ? rowData.items : [];
+
+        const pekerjaan = rowData.nama_pekerjaan || "-";
+
+        const itemLines = formatItems(items);
+
+        hookData.cell.text = [pekerjaan, ...itemLines];
+
+        hookData.cell.styles.fontSize = 7;
+
+        hookData.cell.styles.cellPadding = {
+          top: 4,
+          right: 2.5,
+          bottom: 4,
+          left: 2.5,
+        };
+
+        hookData.cell.styles.valign = "top";
+        hookData.cell.styles.halign = "left";
+        hookData.cell.styles.overflow = "linebreak";
+      }
+
+      // =========================
+      // TOTAL
+      // =========================
+
+      if (hookData.column.index === 6) {
+        hookData.cell.styles.fontStyle = "bold";
+        hookData.cell.styles.fontSize = 9;
+        hookData.cell.styles.halign = "right";
+        hookData.cell.styles.valign = "middle";
+
+        hookData.cell.styles.cellPadding = {
+          top: 3,
+          right: 2.5,
+          bottom: 3,
+          left: 2,
+        };
+      }
+
+      // =========================
       // PRIORITY
+      // =========================
+
       if (hookData.column.index === 5) {
         const style = PRIORITY_STYLE[rowData.priority];
 
@@ -383,7 +505,10 @@ export const exportPurchaseRequestsPDF = (
         }
       }
 
+      // =========================
       // STATUS
+      // =========================
+
       if (hookData.column.index === 7) {
         const style = STATUS_STYLE[rowData.status];
 
@@ -411,12 +536,13 @@ export const exportPurchaseRequestsPDF = (
     0,
   );
 
-  const finalY = doc.lastAutoTable?.finalY;
+  const finalY = doc.lastAutoTable?.finalY || 50;
 
-  const boxX = pageWidth - 85;
-  const boxY = finalY + 5;
   const boxWidth = 73;
   const boxHeight = 13;
+
+  const boxX = pageWidth - margin - boxWidth;
+  const boxY = finalY + 6;
 
   doc.setFillColor(248, 248, 248);
   doc.setDrawColor(215, 215, 215);
@@ -426,12 +552,12 @@ export const exportPurchaseRequestsPDF = (
 
   doc.setTextColor(80, 80, 80);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7);
+  doc.setFontSize(8);
 
-  doc.text("TOTAL NILAI PENGAJUAN", boxX + 4, boxY + 8);
+  doc.text("TOTAL NILAI PENGAJUAN:", boxX + 4, boxY + 8);
 
   doc.setTextColor(185, 28, 28);
-  doc.setFontSize(8.5);
+  doc.setFontSize(10);
 
   doc.text(formatCurrency(totalAmount), boxX + boxWidth - 4, boxY + 8, {
     align: "right",
