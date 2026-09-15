@@ -121,13 +121,74 @@ const formatItems = (items = []) => {
     const jumlah = item.jumlah ?? 0;
     const unit = item.unit || "";
     const hargaSatuan = formatCurrency(item.harga_satuan);
-    const total = formatCurrency(item.total);
+
+    const totalValue =
+      item.total ??
+      (Number(item.harga_satuan) || 0) * (Number(item.jumlah) || 0);
+
+    const total = formatCurrency(totalValue);
+
+    const quantityLabel = unit
+      ? /^\d/.test(String(unit))
+        ? unit
+        : `${jumlah} ${unit}`
+      : `${jumlah}`;
 
     return [
-      `${itemNo}. ${keterangan}`,
-      `   ${jumlah} ${unit} × ${hargaSatuan} = ${total}`,
+      {
+        type: "item",
+        text: `${itemNo}. ${keterangan}`,
+      },
+      {
+        type: "item-detail",
+        text: `   ${quantityLabel} × ${hargaSatuan} = ${total}`,
+      },
     ];
   });
+};
+
+// =========================
+// BUILD PEKERJAAN CONTENT
+// =========================
+
+const buildWorkContent = (rowData) => {
+  const pekerjaan = rowData?.nama_pekerjaan || "-";
+  const note = rowData?.note || "";
+  const items = formatItems(rowData?.items);
+
+  const content = [
+    {
+      type: "job",
+      text: pekerjaan,
+    },
+  ];
+
+  if (note.trim()) {
+    content.push({
+      type: "spacer",
+      text: "",
+    });
+
+    const noteLines = String(note).split(/\r?\n/);
+
+    noteLines.forEach((line) => {
+      content.push({
+        type: "note",
+        text: line || " ",
+      });
+    });
+  }
+
+  if (items.length > 0) {
+    content.push({
+      type: "spacer",
+      text: "",
+    });
+
+    content.push(...items);
+  }
+
+  return content;
 };
 
 // =========================
@@ -157,9 +218,7 @@ export const exportPurchaseRequestsPDF = (
   // =========================
 
   const margin = 12;
-
   const contentWidth = pageWidth - margin * 2;
-
   const logoPath = "/images/logo_original.png";
 
   // =========================
@@ -283,6 +342,9 @@ export const exportPurchaseRequestsPDF = (
         ? 57
         : 50,
 
+    pageBreak: "auto",
+    rowPageBreak: "avoid",
+
     head: [
       [
         "NO",
@@ -297,8 +359,6 @@ export const exportPurchaseRequestsPDF = (
     ],
 
     body: data.map((item, index) => {
-      const items = formatItems(item.items);
-
       return [
         String(index + 1).padStart(2, "0"),
 
@@ -311,7 +371,12 @@ export const exportPurchaseRequestsPDF = (
           item.pegawai?.nama_panggilan ||
           "-",
 
-        [item.nama_pekerjaan || "-", ...items],
+        {
+          type: "work",
+          nama_pekerjaan: item.nama_pekerjaan,
+          note: item.note,
+          items: item.items || [],
+        },
 
         getPriorityLabel(item.priority),
 
@@ -438,20 +503,76 @@ export const exportPurchaseRequestsPDF = (
     didParseCell: (hookData) => {
       if (hookData.section !== "body") return;
 
-      const rowData = data[hookData.row.index];
+      const rowData = hookData.row.raw;
 
       // =========================
       // PEKERJAAN & ITEM
       // =========================
 
       if (hookData.column.index === 4) {
-        const items = Array.isArray(rowData.items) ? rowData.items : [];
+        const workData = hookData.cell.raw;
 
-        const pekerjaan = rowData.nama_pekerjaan || "-";
+        const workContent = buildWorkContent(workData);
 
-        const itemLines = formatItems(items);
+        const cellWidth = Number(hookData.cell.width) || 89;
+        const textWidth = cellWidth - 5;
 
-        hookData.cell.text = [pekerjaan, ...itemLines];
+        const wrappedLines = [];
+
+        workContent.forEach((line) => {
+          let fontStyle = "normal";
+          let fontSize = 7;
+
+          if (line.type === "job") {
+            fontStyle = "bold";
+            fontSize = 7.5;
+          }
+
+          if (line.type === "note") {
+            fontStyle = "italic";
+            fontSize = 6.5;
+          }
+
+          if (line.type === "item-detail") {
+            fontStyle = "normal";
+            fontSize = 6.5;
+          }
+
+          if (line.type === "spacer") {
+            wrappedLines.push({
+              type: "spacer",
+              text: "",
+              fontSize: 7,
+              fontStyle: "normal",
+            });
+
+            return;
+          }
+
+          doc.setFont("helvetica", fontStyle);
+          doc.setFontSize(fontSize);
+
+          const splitLines = doc.splitTextToSize(
+            String(line.text || ""),
+            textWidth,
+          );
+
+          splitLines.forEach((text) => {
+            wrappedLines.push({
+              type: line.type,
+              text,
+              fontSize,
+              fontStyle,
+            });
+          });
+        });
+
+        hookData.cell._workLines = wrappedLines;
+
+        // Dipakai AutoTable untuk menghitung tinggi row.
+        // Teks asli akan disembunyikan di willDrawCell
+        // dan digambar manual di didDrawCell.
+        hookData.cell.text = wrappedLines.map((line) => line.text);
 
         hookData.cell.styles.fontSize = 7;
 
@@ -465,6 +586,35 @@ export const exportPurchaseRequestsPDF = (
         hookData.cell.styles.valign = "top";
         hookData.cell.styles.halign = "left";
         hookData.cell.styles.overflow = "linebreak";
+
+        const estimatedHeight = wrappedLines.reduce((height, line) => {
+          if (line.type === "spacer") {
+            return height + 1.2;
+          }
+
+          if (line.type === "job") {
+            return height + 3.6;
+          }
+
+          if (line.type === "note") {
+            return height + 2.9;
+          }
+
+          if (line.type === "item") {
+            return height + 3.2;
+          }
+
+          if (line.type === "item-detail") {
+            return height + 3.0;
+          }
+
+          return height + 3.2;
+        }, 8);
+
+        hookData.cell.styles.minCellHeight = Math.max(
+          hookData.cell.styles.minCellHeight || 0,
+          estimatedHeight,
+        );
       }
 
       // =========================
@@ -487,10 +637,14 @@ export const exportPurchaseRequestsPDF = (
 
       // =========================
       // PRIORITY
+      // STYLE TIDAK DIUBAH
       // =========================
 
       if (hookData.column.index === 5) {
-        const style = PRIORITY_STYLE[rowData.priority];
+        const style =
+          PRIORITY_STYLE[
+            rowData[5] === undefined ? "" : data[hookData.row.index]?.priority
+          ];
 
         if (style) {
           const bg = hexToRgb(style.light);
@@ -507,10 +661,11 @@ export const exportPurchaseRequestsPDF = (
 
       // =========================
       // STATUS
+      // STYLE TIDAK DIUBAH
       // =========================
 
       if (hookData.column.index === 7) {
-        const style = STATUS_STYLE[rowData.status];
+        const style = STATUS_STYLE[data[hookData.row.index]?.status];
 
         if (style) {
           const bg = hexToRgb(style.light);
@@ -524,6 +679,91 @@ export const exportPurchaseRequestsPDF = (
           hookData.cell.styles.valign = "middle";
         }
       }
+    },
+
+    // =========================
+    // HILANGKAN TEXT DEFAULT
+    // PADA PEKERJAAN & ITEM
+    // =========================
+
+    willDrawCell: (hookData) => {
+      if (hookData.section === "body" && hookData.column.index === 4) {
+        hookData.cell.text = [];
+      }
+    },
+
+    // =========================
+    // DRAW PEKERJAAN & ITEM
+    // =========================
+
+    didDrawCell: (hookData) => {
+      if (hookData.section !== "body" || hookData.column.index !== 4) {
+        return;
+      }
+
+      const lines = hookData.cell._workLines || [];
+
+      if (lines.length === 0) return;
+
+      const leftPadding = 2.5;
+      const topPadding = 4;
+
+      const textX = hookData.cell.x + leftPadding;
+      let textY = hookData.cell.y + topPadding;
+
+      lines.forEach((line) => {
+        if (line.type === "spacer") {
+          textY += 2.5;
+
+          return;
+        }
+
+        let fontStyle = "normal";
+        let fontSize = 7;
+        let textColor = [55, 55, 55];
+        let lineHeight = 3.6;
+
+        if (line.type === "job") {
+          fontStyle = "bold";
+          fontSize = 7.5;
+          textColor = [35, 35, 35];
+          lineHeight = 4.2;
+        }
+
+        if (line.type === "note") {
+          fontStyle = "italic";
+          fontSize = 6.5;
+          textColor = [130, 130, 130];
+          lineHeight = 3.4;
+        }
+
+        if (line.type === "item") {
+          fontStyle = "normal";
+          fontSize = 7;
+          textColor = [55, 55, 55];
+          lineHeight = 3.6;
+        }
+
+        if (line.type === "item-detail") {
+          fontStyle = "normal";
+          fontSize = 6.5;
+          textColor = [90, 90, 90];
+          lineHeight = 3.6;
+        }
+
+        doc.setFont("helvetica", fontStyle);
+        doc.setFontSize(fontSize);
+        doc.setTextColor(textColor[0], textColor[1], textColor[2]);
+
+        doc.text(line.text, textX, textY);
+
+        textY += lineHeight;
+      });
+
+      // Reset style agar tidak memengaruhi cell berikutnya.
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(55, 55, 55);
     },
   });
 
@@ -568,7 +808,6 @@ export const exportPurchaseRequestsPDF = (
   // =========================
 
   const totalPages = doc.internal.getNumberOfPages();
-
   const generatedAt = new Date().toLocaleString("id-ID");
 
   for (let page = 1; page <= totalPages; page++) {
