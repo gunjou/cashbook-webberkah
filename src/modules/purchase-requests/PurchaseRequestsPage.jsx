@@ -256,6 +256,7 @@ const PurchaseRequestsPage = () => {
       await createCashbookTransaction({
         id_account: paymentData.id_account,
         id_category: paymentData.id_category,
+        id_request: paymentData.id_request,
         transaction_date: paymentData.transaction_date,
         transaction_type: "OUT",
         amount: paymentData.amount,

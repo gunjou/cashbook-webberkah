@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import CurrencyText from "../../components/CurrencyText";
+import { formatCurrency } from "../../utils/currency";
 
 const TransactionItem = ({
   transaction,
@@ -133,15 +134,58 @@ const TransactionItem = ({
 
               {/* Notes */}
 
-              {transaction.notes && (
-                <div className="lg:col-span-2">
-                  <p className="text-[11px] uppercase tracking-widest text-gray-500">
-                    Notes
-                  </p>
+              {(transaction.note || transaction.items?.length > 0) && (
+                <div className="lg:col-span-2 space-y-5">
+                  {/* Notes */}
+                  {transaction.note && (
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                        Notes
+                      </p>
 
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800">
-                    {transaction.notes}
-                  </p>
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800">
+                        {transaction.note}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Items */}
+                  {transaction.items?.length > 0 && (
+                    <div>
+                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                        Items
+                      </p>
+
+                      <div className="space-y-2">
+                        {/* Items */}
+                        {transaction.items?.length > 0 && (
+                          <div className="mt-1 space-y-1">
+                            {transaction.items.map((item) => (
+                              <div
+                                key={item.id_item}
+                                className="flex items-center justify-between gap-3 border-b border-gray-100 py-1.5 last:border-0"
+                              >
+                                <div className="min-w-0">
+                                  <p className="truncate text-xs text-gray-700">
+                                    {item.item_no}. {item.keterangan}
+                                  </p>
+
+                                  <p className="text-[10px] text-gray-400">
+                                    {item.jumlah} {item.unit} ×{" "}
+                                    {formatCurrency(item.harga_satuan)}
+                                  </p>
+                                </div>
+
+                                <p className="shrink-0 text-xs font-medium text-gray-700">
+                                  {formatCurrency(item.total)}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -290,16 +334,48 @@ const TransactionItem = ({
               </div>
 
               {/* Notes */}
-
-              {transaction.notes && (
-                <div>
-                  <p className="text-[11px] uppercase tracking-widest text-gray-500">
+              {transaction.note && (
+                <div className="min-w-0">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-[11px] sm:text-gray-500">
                     Notes
                   </p>
 
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800">
-                    {transaction.notes}
+                  <p className="mt-1 whitespace-pre-wrap break-words text-xs leading-relaxed text-gray-700 sm:text-sm sm:text-gray-800">
+                    {transaction.note}
                   </p>
+                </div>
+              )}
+
+              {/* Items */}
+              {transaction.items?.length > 0 && (
+                <div className="mt-3 min-w-0">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+                    Items
+                  </p>
+
+                  <div className="space-y-1">
+                    {transaction.items.map((item) => (
+                      <div
+                        key={item.id_item}
+                        className="flex min-w-0 flex-col gap-0.5 border-b border-gray-100 py-1.5 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="break-words text-xs text-gray-700">
+                            {item.item_no}. {item.keterangan}
+                          </p>
+
+                          <p className="text-[10px] text-gray-400">
+                            {item.jumlah} {item.unit} ×{" "}
+                            {formatCurrency(item.harga_satuan)}
+                          </p>
+                        </div>
+
+                        <p className="text-xs font-medium text-gray-700 sm:shrink-0">
+                          {formatCurrency(item.total)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
