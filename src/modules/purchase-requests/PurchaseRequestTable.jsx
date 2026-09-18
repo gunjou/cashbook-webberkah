@@ -48,6 +48,9 @@ const PurchaseRequestTable = ({
   onSort,
   onDetail,
   onPaid,
+  viewMode,
+  startIndex = 0,
+  enableSort = true,
 }) => {
   if (loading) {
     return (
@@ -77,63 +80,83 @@ const PurchaseRequestTable = ({
 
   return (
     <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-border bg-card shadow-card">
-      <div className="max-h-[calc(100vh-320px)] w-full min-w-0 max-w-full overflow-x-auto overflow-y-auto">
+      <div
+        className={`w-full min-w-0 max-w-full overflow-x-auto overflow-y-auto ${
+          viewMode === "HISTORY"
+            ? "max-h-[calc(100vh-350px)]"
+            : "max-h-[calc(100vh-300px)]"
+        }`}
+      >
         <table className="w-max min-w-[1100px] md:w-full md:min-w-0">
           <thead className="sticky top-0 z-20">
             <tr className="border-b border-border bg-surface">
-              <th className="w-12 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-12 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 No
               </th>
 
-              <th className="w-44 px-4 py-4 text-left">
-                <button
-                  type="button"
-                  onClick={() => onSort?.("date")}
-                  className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
-                >
-                  Pengajuan
-                  {sortConfig?.key === "date" &&
-                    (sortConfig.direction === "asc" ? (
-                      <ArrowUp size={13} />
-                    ) : (
-                      <ArrowDown size={13} />
-                    ))}
-                </button>
+              <th className="w-44 px-4 py-2 text-left">
+                {enableSort && (
+                  <button
+                    type="button"
+                    onClick={() => onSort?.("date")}
+                    className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
+                  >
+                    Pengajuan
+                    {sortConfig?.key === "date" &&
+                      (sortConfig.direction === "asc" ? (
+                        <ArrowUp size={13} />
+                      ) : (
+                        <ArrowDown size={13} />
+                      ))}
+                  </button>
+                )}
+
+                {!enableSort && (
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                    Pengajuan
+                  </span>
+                )}
               </th>
 
-              <th className="w-44 px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-44 px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Pemohon
               </th>
 
-              <th className="min-w-[280px] px-4 py-4 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="min-w-[280px] px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Pekerjaan
               </th>
 
-              <th className="w-32 px-4 py-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => onSort?.("priority")}
-                  className="mx-auto flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
-                >
-                  Priority
-                  {sortConfig?.key === "priority" &&
-                    (sortConfig.direction === "asc" ? (
-                      <ArrowUp size={13} />
-                    ) : (
-                      <ArrowDown size={13} />
-                    ))}
-                </button>
+              <th className="px-4 py-2 text-center">
+                {enableSort ? (
+                  <button
+                    type="button"
+                    onClick={() => onSort?.("priority")}
+                    className="mx-auto flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
+                  >
+                    Priority
+                    {sortConfig?.key === "priority" &&
+                      (sortConfig.direction === "asc" ? (
+                        <ArrowUp size={13} />
+                      ) : (
+                        <ArrowDown size={13} />
+                      ))}
+                  </button>
+                ) : (
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                    Priority
+                  </span>
+                )}
               </th>
 
-              <th className="w-36 px-4 py-4 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-36 px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Total
               </th>
 
-              <th className="w-32 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-32 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Status
               </th>
 
-              <th className="w-24 px-4 py-4 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-24 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Aksi
               </th>
             </tr>
@@ -153,16 +176,16 @@ const PurchaseRequestTable = ({
                 >
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4 text-center"
+                    className="cursor-pointer px-4 py-2 text-center"
                   >
                     <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-[10px] font-semibold text-muted">
-                      {String(index + 1).padStart(2, "0")}
+                      {String(startIndex + index + 1).padStart(2, "0")}
                     </span>
                   </td>
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4"
+                    className="cursor-pointer px-4 py-2"
                   >
                     <div className="flex flex-col gap-1">
                       <span className="text-[10px] font-medium text-muted">
@@ -177,7 +200,7 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4"
+                    className="cursor-pointer px-4 py-2"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary">
@@ -200,7 +223,7 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4"
+                    className="cursor-pointer px-4 py-2"
                   >
                     <div className="max-w-[480px]">
                       <p className="text-xs font-semibold leading-5 text-text">
@@ -217,7 +240,7 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4 text-center"
+                    className="cursor-pointer px-4 py-2 text-center"
                   >
                     <span
                       className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[9px] font-bold uppercase ${priority.className}`}
@@ -229,7 +252,7 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4 text-right"
+                    className="cursor-pointer px-4 py-2 text-right"
                   >
                     <span className="whitespace-nowrap text-sm font-bold text-secondary">
                       <CurrencyText value={item.total_amount} />
@@ -238,7 +261,7 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-4 text-center"
+                    className="cursor-pointer px-4 py-2 text-center"
                   >
                     <span
                       className={`inline-flex min-w-[80px] justify-center rounded-full px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wide ${status.className}`}
@@ -247,7 +270,7 @@ const PurchaseRequestTable = ({
                     </span>
                   </td>
 
-                  <td className="px-4 py-4 text-center">
+                  <td className="px-4 py-2 text-center">
                     {item.status === "APPROVED" && (
                       <button
                         type="button"

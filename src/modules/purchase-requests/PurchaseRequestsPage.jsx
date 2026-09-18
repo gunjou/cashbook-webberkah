@@ -20,6 +20,7 @@ import PurchaseRequestDetailModal from "./PurchaseRequestDetailModal";
 import PurchaseRequestAttachmentModal from "./PurchaseRequestAttachmentModal";
 import PurchaseRequestPaymentModal from "./PurchaseRequestPaymentModal";
 import { exportPurchaseRequestsPDF } from "../../reports/pdf/purchase-request.export";
+import PurchaseRequestPagination from "./PurchaseRequestPagination";
 
 const INITIAL_ACTIVE_FILTER = {
   status: "APPROVED",
@@ -45,6 +46,15 @@ const PurchaseRequestsPage = () => {
   });
   const [filter, setFilter] = useState(INITIAL_ACTIVE_FILTER);
 
+  const [historyPage, setHistoryPage] = useState(1);
+  const [historyPerPage, setHistoryPerPage] = useState(25);
+  const [historyPageInfo, setHistoryPageInfo] = useState({
+    page: 1,
+    per_page: 25,
+    total: 0,
+    total_pages: 1,
+  });
+
   const [openDetail, setOpenDetail] = useState(false);
   const [detailData, setDetailData] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -54,6 +64,8 @@ const PurchaseRequestsPage = () => {
   const [paymentLoading, setPaymentLoading] = useState(false);
 
   const [exportLoading, setExportLoading] = useState(false);
+
+  const isHistoryPaginated = viewMode === "HISTORY" && filter.status === "PAID";
 
   const loadDepartments = useCallback(async () => {
     try {
@@ -81,19 +93,47 @@ const PurchaseRequestsPage = () => {
       if (filter.tanggal_selesai)
         params.tanggal_selesai = filter.tanggal_selesai;
 
-      const result =
-        viewMode === "ACTIVE"
-          ? await getPurchaseRequests(params)
-          : await getPurchaseRequestHistory({
-              ...params,
-              page: 1,
-              per_page: 10,
-            });
+      if (viewMode === "ACTIVE") {
+        const result = await getPurchaseRequests(params);
 
-      setData(viewMode === "ACTIVE" ? result || [] : result?.data || []);
+        setData(result || []);
+        return;
+      }
+
+      const historyParams = {
+        ...params,
+      };
+
+      if (isHistoryPaginated) {
+        historyParams.page = historyPage;
+        historyParams.per_page = historyPerPage;
+      }
+
+      const result = await getPurchaseRequestHistory(historyParams);
+
+      if (isHistoryPaginated) {
+        setData(result?.data || []);
+
+        setHistoryPageInfo({
+          page: result?.page_info?.page || historyPage,
+          per_page: result?.page_info?.per_page || historyPerPage,
+          total: result?.page_info?.total || 0,
+          total_pages: result?.page_info?.total_pages || 1,
+        });
+      } else {
+        setData(result?.data || []);
+
+        setHistoryPageInfo({
+          page: 1,
+          per_page: result?.page_info?.total || result?.data?.length || 0,
+          total: result?.page_info?.total || result?.data?.length || 0,
+          total_pages: 1,
+        });
+      }
     } catch (error) {
       console.error(error);
       setData([]);
+
       swal.fire({
         icon: "error",
         title: "Gagal Memuat Data",
@@ -104,7 +144,7 @@ const PurchaseRequestsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [filter, viewMode]);
+  }, [filter, viewMode, historyPage, historyPerPage, isHistoryPaginated]);
 
   useEffect(() => {
     loadDepartments();
@@ -114,19 +154,29 @@ const PurchaseRequestsPage = () => {
     loadData();
   }, [loadData]);
 
-  const displayedData = [...data].sort((a, b) => {
-    if (sortConfig.key === "priority") {
-      const priorityOrder = { NORMAL: 1, URGENT: 2, TOP_URGENT: 3 };
-      const result =
-        (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
-      return sortConfig.direction === "desc" ? result : -result;
-    }
+  const displayedData =
+    viewMode === "ACTIVE"
+      ? [...data].sort((a, b) => {
+          if (sortConfig.key === "priority") {
+            const priorityOrder = {
+              NORMAL: 1,
+              URGENT: 2,
+              TOP_URGENT: 3,
+            };
 
-    const dateA = new Date(a.created_at || 0).getTime();
-    const dateB = new Date(b.created_at || 0).getTime();
+            const result =
+              (priorityOrder[b.priority] || 0) -
+              (priorityOrder[a.priority] || 0);
 
-    return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
-  });
+            return sortConfig.direction === "desc" ? result : -result;
+          }
+
+          const dateA = new Date(a.created_at || 0).getTime();
+          const dateB = new Date(b.created_at || 0).getTime();
+
+          return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+        })
+      : data;
 
   const handleSort = (key) => {
     setSortConfig((current) => ({
@@ -136,17 +186,31 @@ const PurchaseRequestsPage = () => {
     }));
   };
 
+  const handleHistoryPerPageChange = (value) => {
+    setHistoryPerPage(Number(value));
+    setHistoryPage(1);
+
+    setFilter((prev) => ({
+      ...prev,
+      status: "PAID",
+    }));
+  };
+
   const handleViewMode = () => {
     const nextMode = viewMode === "ACTIVE" ? "HISTORY" : "ACTIVE";
 
     setViewMode(nextMode);
     setData([]);
+    setHistoryPage(1);
+
     setFilter(
       nextMode === "ACTIVE" ? INITIAL_ACTIVE_FILTER : INITIAL_HISTORY_FILTER,
     );
   };
 
   const handleResetFilter = () => {
+    setHistoryPage(1);
+
     setFilter(
       viewMode === "ACTIVE" ? INITIAL_ACTIVE_FILTER : INITIAL_HISTORY_FILTER,
     );
@@ -326,7 +390,7 @@ const PurchaseRequestsPage = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6 p-6">
+      <div className="space-y-3 p-6 pb-2">
         {/* Header */}
 
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -411,7 +475,26 @@ const PurchaseRequestsPage = () => {
           onSort={handleSort}
           onDetail={handleDetail}
           onPaid={handlePaid}
+          viewMode={viewMode}
+          startIndex={
+            isHistoryPaginated
+              ? (historyPageInfo.page - 1) * historyPageInfo.per_page
+              : 0
+          }
+          enableSort={viewMode === "ACTIVE"}
         />
+
+        {isHistoryPaginated && historyPageInfo.total > 0 && (
+          <PurchaseRequestPagination
+            page={historyPageInfo.page}
+            perPage={historyPageInfo.per_page}
+            total={historyPageInfo.total}
+            totalPages={historyPageInfo.total_pages}
+            loading={loading}
+            onPageChange={setHistoryPage}
+            onPerPageChange={handleHistoryPerPageChange}
+          />
+        )}
       </div>
 
       <PurchaseRequestDetailModal
