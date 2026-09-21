@@ -3,6 +3,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Circle,
+  FileImage,
   FileText,
   Flag,
   Image,
@@ -484,7 +485,9 @@ const PurchaseRequestDetailModal = ({
 
               {/* History */}
 
-              {data.history?.length > 0 && <StatusHistory data={data} />}
+              {data.history?.length > 0 && (
+                <StatusHistory data={data} onAttachment={handleAttachment} />
+              )}
 
               {/* Meta */}
 
@@ -561,14 +564,17 @@ const DetailField = ({ label, value }) => (
   </div>
 );
 
-const StatusHistory = ({ data }) => {
+const StatusHistory = ({ data, onAttachment }) => {
   const normalStatuses = ["REQUESTED", "REVIEWED", "APPROVED", "PAID"];
   const rejectedStatuses = ["REQUESTED", "REVIEWED", "REJECTED"];
+
   const historyStatuses =
     data.status === "REJECTED" ? rejectedStatuses : normalStatuses;
+
   const historyMap = Object.fromEntries(
     (data.history || []).map((item) => [item.status, item]),
   );
+
   const lastStatusIndex = historyStatuses.findIndex(
     (status) => status === data.status,
   );
@@ -579,6 +585,7 @@ const StatusHistory = ({ data }) => {
         <h3 className="text-xs font-semibold uppercase tracking-wider text-secondary">
           Riwayat Pengajuan
         </h3>
+
         <p className="mt-1 text-[11px] text-muted">
           Perjalanan status pengajuan dari awal hingga status terakhir.
         </p>
@@ -601,17 +608,25 @@ const StatusHistory = ({ data }) => {
 
             {historyStatuses.map((status, index) => {
               const history = historyMap[status];
+
               const statusStyle =
                 STATUS_STYLE[status] || STATUS_STYLE.REQUESTED;
+
               const isPassed = index <= lastStatusIndex;
+              const isPaid = status === "PAID";
 
               return (
                 <div
                   key={status}
                   className="relative z-10 flex min-w-0 flex-1 flex-col items-center"
                 >
+                  {/* Status Icon */}
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-4 border-surface ${isPassed ? "bg-primary text-white" : "bg-card text-muted border-border"}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-4 border-surface ${
+                      isPassed
+                        ? "bg-primary text-white"
+                        : "bg-card text-muted border-border"
+                    }`}
                   >
                     {isPassed ? (
                       <CheckCircle2 size={18} />
@@ -620,20 +635,26 @@ const StatusHistory = ({ data }) => {
                     )}
                   </div>
 
+                  {/* Status */}
                   <span
-                    className={`mt-3 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider ${isPassed ? statusStyle.className : "bg-card text-muted"}`}
+                    className={`mt-3 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider ${
+                      isPassed ? statusStyle.className : "bg-card text-muted"
+                    }`}
                   >
                     {statusStyle.label}
                   </span>
 
+                  {/* History */}
                   {history ? (
                     <>
                       <p className="mt-2 max-w-[130px] truncate text-center text-[10px] font-semibold text-text">
                         {history.nama_pegawai || "-"}
                       </p>
+
                       <p className="mt-1 text-center text-[9px] text-muted">
                         {formatDateTime(history.created_at)}
                       </p>
+
                       {history.note && (
                         <p className="mt-2 line-clamp-2 max-w-[130px] text-center text-[9px] leading-4 text-muted">
                           {history.note}
@@ -644,6 +665,31 @@ const StatusHistory = ({ data }) => {
                     <p className="mt-2 text-center text-[9px] italic text-muted">
                       Belum dilakukan
                     </p>
+                  )}
+
+                  {/* Bukti Bayar */}
+                  {isPaid && (
+                    <div className="mt-3 flex flex-col items-center">
+                      {data.payment?.bukti_bayar ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onAttachment?.({
+                              name: "bukti_pembayaran.jpg",
+                              path: data.payment.bukti_bayar,
+                            })
+                          }
+                          className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-[9px] font-black uppercase tracking-wider text-white transition-all hover:opacity-90"
+                        >
+                          <FileImage size={13} />
+                          Lihat Bukti
+                        </button>
+                      ) : (
+                        <span className="text-center text-[9px] italic text-muted">
+                          Bukti Bayar Tidak Tersedia
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               );
