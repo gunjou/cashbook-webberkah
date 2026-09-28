@@ -530,7 +530,7 @@ export const exportPurchaseRequestsPDF = (
 
           if (line.type === "note") {
             fontStyle = "italic";
-            fontSize = 6.5;
+            fontSize = 7.5;
           }
 
           if (line.type === "item-detail") {
@@ -732,9 +732,9 @@ export const exportPurchaseRequestsPDF = (
 
         if (line.type === "note") {
           fontStyle = "italic";
-          fontSize = 6.5;
-          textColor = [130, 130, 130];
-          lineHeight = 3.4;
+          fontSize = 7.5;
+          textColor = [35, 35, 35];
+          lineHeight = 4.1;
         }
 
         if (line.type === "item") {

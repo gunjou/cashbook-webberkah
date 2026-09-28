@@ -227,12 +227,12 @@ const PurchaseRequestTable = ({
                   >
                     <div className="max-w-[480px]">
                       <p className="text-xs font-semibold leading-5 text-text">
-                        {item.nama_pekerjaan || "-"}
+                        {item.note || item.nama_pekerjaan || "-"}
                       </p>
 
-                      {item.note && (
+                      {item.note && item.nama_pekerjaan && (
                         <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted">
-                          {item.note}
+                          {item.nama_pekerjaan}
                         </p>
                       )}
                     </div>
