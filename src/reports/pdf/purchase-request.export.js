@@ -96,6 +96,14 @@ const PRIORITY_STYLE = {
   },
 };
 
+const WORK_LINE_HEIGHT = {
+  job: 4.2,
+  note: 4.1,
+  item: 3.6,
+  "item-detail": 3.6,
+  spacer: 1.2,
+};
+
 const hexToRgb = (hex) => {
   const value = parseInt(hex.replace("#", ""), 16);
 
@@ -218,7 +226,7 @@ export const exportPurchaseRequestsPDF = (
   // =========================
 
   const margin = 12;
-  const contentWidth = pageWidth - margin * 2;
+  // const contentWidth = pageWidth - margin * 2;
   const logoPath = "/images/logo_original.png";
 
   // =========================
@@ -587,28 +595,32 @@ export const exportPurchaseRequestsPDF = (
         hookData.cell.styles.halign = "left";
         hookData.cell.styles.overflow = "linebreak";
 
+        // const estimatedHeight = wrappedLines.reduce((height, line) => {
+        //   if (line.type === "spacer") {
+        //     return height + 1.2;
+        //   }
+
+        //   if (line.type === "job") {
+        //     return height + 3.6;
+        //   }
+
+        //   if (line.type === "note") {
+        //     return height + 2.9;
+        //   }
+
+        //   if (line.type === "item") {
+        //     return height + 3.2;
+        //   }
+
+        //   if (line.type === "item-detail") {
+        //     return height + 3.0;
+        //   }
+
+        //   return height + 3.2;
+        // }, 8);
+
         const estimatedHeight = wrappedLines.reduce((height, line) => {
-          if (line.type === "spacer") {
-            return height + 1.2;
-          }
-
-          if (line.type === "job") {
-            return height + 3.6;
-          }
-
-          if (line.type === "note") {
-            return height + 2.9;
-          }
-
-          if (line.type === "item") {
-            return height + 3.2;
-          }
-
-          if (line.type === "item-detail") {
-            return height + 3.0;
-          }
-
-          return height + 3.2;
+          return height + (WORK_LINE_HEIGHT[line.type] || 3.6);
         }, 8);
 
         hookData.cell.styles.minCellHeight = Math.max(
@@ -706,7 +718,7 @@ export const exportPurchaseRequestsPDF = (
       if (lines.length === 0) return;
 
       const leftPadding = 2.5;
-      const topPadding = 4;
+      const topPadding = 6; // top padding item di dalam kolom
 
       const textX = hookData.cell.x + leftPadding;
       let textY = hookData.cell.y + topPadding;
@@ -721,34 +733,31 @@ export const exportPurchaseRequestsPDF = (
         let fontStyle = "normal";
         let fontSize = 7;
         let textColor = [55, 55, 55];
-        let lineHeight = 3.6;
+
+        let lineHeight = WORK_LINE_HEIGHT[line.type] || 3.6;
 
         if (line.type === "job") {
           fontStyle = "bold";
           fontSize = 7.5;
           textColor = [35, 35, 35];
-          lineHeight = 4.2;
         }
 
         if (line.type === "note") {
           fontStyle = "italic";
           fontSize = 7.5;
           textColor = [35, 35, 35];
-          lineHeight = 4.1;
         }
 
         if (line.type === "item") {
           fontStyle = "normal";
           fontSize = 7;
           textColor = [55, 55, 55];
-          lineHeight = 3.6;
         }
 
         if (line.type === "item-detail") {
           fontStyle = "normal";
           fontSize = 6.5;
           textColor = [90, 90, 90];
-          lineHeight = 3.6;
         }
 
         doc.setFont("helvetica", fontStyle);
