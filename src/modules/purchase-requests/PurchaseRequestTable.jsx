@@ -51,7 +51,16 @@ const PurchaseRequestTable = ({
   viewMode,
   startIndex = 0,
   enableSort = true,
+  selectedIds = [],
+  onToggleSelect,
+  onToggleSelectAll,
 }) => {
+  const selectedSet = new Set(selectedIds);
+  const allSelected =
+    data.length > 0 && data.every((item) => selectedSet.has(item.id_request));
+  const someSelected =
+    !allSelected && data.some((item) => selectedSet.has(item.id_request));
+
   if (loading) {
     return (
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
@@ -90,6 +99,19 @@ const PurchaseRequestTable = ({
         <table className="w-max min-w-[1100px] md:w-full md:min-w-0">
           <thead className="sticky top-0 z-20">
             <tr className="border-b border-border bg-surface">
+              <th className="w-10 px-3 py-2 text-center">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  ref={(el) => {
+                    if (el) el.indeterminate = someSelected;
+                  }}
+                  onChange={() => onToggleSelectAll?.(!allSelected)}
+                  className="h-4 w-4 cursor-pointer accent-primary"
+                  title="Pilih semua"
+                />
+              </th>
+
               <th className="w-12 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
                 No
               </th>
@@ -169,14 +191,25 @@ const PurchaseRequestTable = ({
               const priority =
                 PRIORITY_STYLE[item.priority] || PRIORITY_STYLE.NORMAL;
 
+              const isSelected = selectedSet.has(item.id_request);
+
               return (
                 <tr
                   key={item.id_request}
-                  className="group transition hover:bg-primary/5"
+                  className={`group transition hover:bg-primary/5 ${isSelected ? "bg-primary/5" : ""}`}
                 >
+                  <td className="px-3 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelect?.(item.id_request)}
+                      className="h-4 w-4 cursor-pointer accent-primary"
+                    />
+                  </td>
+
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-2 text-center"
+                    className="cursor-pointer px-1 py-2 text-center"
                   >
                     <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-[10px] font-semibold text-muted">
                       {String(startIndex + index + 1).padStart(2, "0")}
@@ -188,11 +221,11 @@ const PurchaseRequestTable = ({
                     className="cursor-pointer px-4 py-2"
                   >
                     <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-medium text-muted">
+                      <span className="text-[10px] font-medium text-muted whitespace-nowrap">
                         {item.request_number || "-"}
                       </span>
 
-                      <span className="text-xs font-semibold text-secondary">
+                      <span className="text-xs font-semibold text-secondary whitespace-nowrap">
                         {formatDate(item.tanggal_request)}
                       </span>
                     </div>

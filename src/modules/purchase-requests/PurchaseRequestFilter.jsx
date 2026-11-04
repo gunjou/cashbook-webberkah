@@ -1,12 +1,31 @@
-import { Building2, CalendarDays, RefreshCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CalendarDays, RefreshCcw, Search } from "lucide-react";
 
 const PurchaseRequestFilter = ({
   filter,
   setFilter,
-  departments,
   onReset,
   viewMode,
 }) => {
+  const [searchInput, setSearchInput] = useState(filter.search || "");
+
+  // Sinkron saat filter di-reset / ganti mode
+  useEffect(() => {
+    setSearchInput(filter.search || "");
+  }, [filter.search]);
+
+  // Debounce agar tidak request setiap ketikan
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const value = searchInput.trim();
+      setFilter((prev) =>
+        (prev.search || "") === value ? prev : { ...prev, search: value },
+      );
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchInput, setFilter]);
+
   const statusTabs =
     viewMode === "ACTIVE"
       ? [
@@ -44,29 +63,17 @@ const PurchaseRequestFilter = ({
 
         <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row">
           <div className="relative min-w-0 flex-1">
-            <Building2
+            <Search
               size={16}
               className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             />
-            <select
-              value={filter.id_departemen}
-              onChange={(e) =>
-                setFilter((prev) => ({
-                  ...prev,
-                  id_departemen: e.target.value,
-                }))
-              }
-              className="w-full appearance-none rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-sm text-text outline-none transition focus:border-primary"
-            >
-              <option value="">Semua Departemen</option>
-              {departments
-                .filter((item) => item.status === 1)
-                .map((item) => (
-                  <option key={item.id_departemen} value={item.id_departemen}>
-                    {item.nama_departemen}
-                  </option>
-                ))}
-            </select>
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Cari pemohon, pekerjaan, keterangan..."
+              className="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-sm text-text outline-none transition focus:border-primary"
+            />
           </div>
 
           <div className="relative min-w-0 flex-1">

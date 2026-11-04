@@ -9,7 +9,6 @@ import PurchaseRequestTable from "./PurchaseRequestTable";
 
 import {
   createCashbookTransaction,
-  getDepartments,
   getPurchaseRequestDetail,
   getPurchaseRequestHistory,
   getPurchaseRequests,
@@ -24,13 +23,13 @@ import PurchaseRequestPagination from "./PurchaseRequestPagination";
 
 const INITIAL_ACTIVE_FILTER = {
   status: "APPROVED",
-  id_departemen: "",
+  search: "",
   tanggal_mulai: "",
   tanggal_selesai: "",
 };
 const INITIAL_HISTORY_FILTER = {
   status: "PAID",
-  id_departemen: "",
+  search: "",
   tanggal_mulai: "",
   tanggal_selesai: "",
 };
@@ -39,7 +38,6 @@ const PurchaseRequestsPage = () => {
   const [viewMode, setViewMode] = useState("ACTIVE");
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [departments, setDepartments] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "asc",
@@ -62,25 +60,12 @@ const PurchaseRequestsPage = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedPaymentRequest, setSelectedPaymentRequest] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
 
   const [exportLoading, setExportLoading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const isHistoryPaginated = viewMode === "HISTORY" && filter.status === "PAID";
-
-  const loadDepartments = useCallback(async () => {
-    try {
-      const result = await getDepartments();
-      setDepartments(result || []);
-    } catch (error) {
-      console.error(error);
-      swal.fire({
-        icon: "error",
-        title: "Gagal",
-        text:
-          error.response?.data?.message || "Gagal mengambil data departemen.",
-      });
-    }
-  }, []);
 
   const loadData = useCallback(async () => {
     try {
@@ -88,7 +73,7 @@ const PurchaseRequestsPage = () => {
 
       const params = { status: filter.status };
 
-      if (filter.id_departemen) params.id_departemen = filter.id_departemen;
+      if (filter.search) params.search = filter.search;
       if (filter.tanggal_mulai) params.tanggal_mulai = filter.tanggal_mulai;
       if (filter.tanggal_selesai)
         params.tanggal_selesai = filter.tanggal_selesai;
@@ -147,12 +132,25 @@ const PurchaseRequestsPage = () => {
   }, [filter, viewMode, historyPage, historyPerPage, isHistoryPaginated]);
 
   useEffect(() => {
-    loadDepartments();
-  }, [loadDepartments]);
-
-  useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Reset pilihan setiap data tabel berubah (filter, mode, halaman)
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [data]);
+
+  const handleToggleSelect = (idRequest) => {
+    setSelectedIds((prev) =>
+      prev.includes(idRequest)
+        ? prev.filter((id) => id !== idRequest)
+        : [...prev, idRequest],
+    );
+  };
+
+  const handleToggleSelectAll = (checked) => {
+    setSelectedIds(checked ? displayedData.map((item) => item.id_request) : []);
+  };
 
   const displayedData =
     viewMode === "ACTIVE"
@@ -246,7 +244,13 @@ const PurchaseRequestsPage = () => {
   };
 
   const handleExportPDF = async () => {
-    if (!displayedData.length) {
+    // Tanpa pilihan: export semua yang tampil di tabel.
+    // Dengan pilihan: hanya baris terpilih (urutan mengikuti tabel).
+    const exportData = selectedIds.length
+      ? displayedData.filter((item) => selectedIds.includes(item.id_request))
+      : displayedData;
+
+    if (!exportData.length) {
       await swal.fire({
         icon: "warning",
         title: "Tidak Ada Data",
@@ -256,20 +260,15 @@ const PurchaseRequestsPage = () => {
       return;
     }
 
-    const selectedDepartment = departments.find(
-      (item) => String(item.id_departemen) === String(filter.id_departemen),
-    );
-
     try {
       setExportLoading(true);
 
       await new Promise((resolve) => setTimeout(resolve, 50));
 
-      exportPurchaseRequestsPDF(displayedData, {
+      exportPurchaseRequestsPDF(exportData, {
         filters: filter,
         sortField: sortConfig.key,
         sortDirection: sortConfig.direction,
-        departmentName: selectedDepartment?.nama_departemen || "",
       });
     } catch (error) {
       console.error("Gagal export PDF:", error);
@@ -302,13 +301,12 @@ const PurchaseRequestsPage = () => {
     ========================== */
 
       if (paymentData.attachment_file) {
+        setUploadProgress(0);
+
         const uploadResponse = await uploadAttachment(
           paymentData.attachment_file,
+          { onProgress: setUploadProgress },
         );
-
-        if (!uploadResponse?.status || !uploadResponse?.url) {
-          throw new Error("Upload bukti pembayaran gagal.");
-        }
 
         attachmentUrl = uploadResponse.url;
       }
@@ -375,6 +373,7 @@ const PurchaseRequestsPage = () => {
       });
     } finally {
       setPaymentLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -420,7 +419,9 @@ const PurchaseRequestsPage = () => {
               ) : (
                 <>
                   <Download size={16} />
-                  Export PDF
+                  {selectedIds.length
+                    ? `Export PDF (${selectedIds.length})`
+                    : "Export PDF"}
                 </>
               )}
             </button>
@@ -461,7 +462,6 @@ const PurchaseRequestsPage = () => {
         <PurchaseRequestFilter
           filter={filter}
           setFilter={setFilter}
-          departments={departments}
           onReset={handleResetFilter}
           viewMode={viewMode}
         />
@@ -482,6 +482,9 @@ const PurchaseRequestsPage = () => {
               : 0
           }
           enableSort={viewMode === "ACTIVE"}
+          selectedIds={selectedIds}
+          onToggleSelect={handleToggleSelect}
+          onToggleSelectAll={handleToggleSelectAll}
         />
 
         {isHistoryPaginated && historyPageInfo.total > 0 && (
@@ -514,6 +517,7 @@ const PurchaseRequestsPage = () => {
         open={paymentModalOpen}
         data={selectedPaymentRequest}
         loading={paymentLoading}
+        uploadProgress={uploadProgress}
         onClose={() => {
           if (paymentLoading) return;
 

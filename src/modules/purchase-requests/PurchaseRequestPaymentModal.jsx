@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
   CheckCircle2,
+  FileText,
   ImagePlus,
   Loader2,
   X,
@@ -10,6 +11,8 @@ import {
 import {
   getCashbookAccounts,
   getCashbookCategories,
+  ATTACHMENT_ACCEPT,
+  validateAttachment,
 } from "./purchase-request.service";
 import swal from "../../lib/swal";
 import { formatCurrencyInput } from "../../utils/currency";
@@ -35,6 +38,7 @@ const PurchaseRequestPaymentModal = ({
   open,
   data,
   loading = false,
+  uploadProgress = null,
   onClose,
   onSubmit,
 }) => {
@@ -170,11 +174,13 @@ const PurchaseRequestPaymentModal = ({
 
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
+    const error = validateAttachment(file);
+
+    if (error) {
       swal.fire({
         icon: "warning",
         title: "File Tidak Valid",
-        text: "Bukti pembayaran harus berupa gambar.",
+        text: error,
       });
 
       target.value = "";
@@ -186,7 +192,10 @@ const PurchaseRequestPaymentModal = ({
     }
 
     setAttachmentFile(file);
-    setAttachmentPreview(URL.createObjectURL(file));
+    // Preview thumbnail hanya untuk gambar
+    setAttachmentPreview(
+      file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+    );
 
     target.value = "";
   };
@@ -536,7 +545,7 @@ const PurchaseRequestPaymentModal = ({
                   <input
                     hidden
                     type="file"
-                    accept="image/*"
+                    accept={ATTACHMENT_ACCEPT}
                     onChange={handleUpload}
                     disabled={formLoading}
                   />
@@ -544,17 +553,23 @@ const PurchaseRequestPaymentModal = ({
                   <ImagePlus size={18} className="text-primary" />
 
                   <span className="text-sm font-medium text-text">
-                    Pilih Bukti
+                    Pilih Bukti (Gambar / PDF)
                   </span>
                 </label>
               ) : (
                 <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                   <div className="flex items-center gap-3">
-                    <img
-                      src={attachmentPreview}
-                      alt="Bukti pembayaran"
-                      className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
-                    />
+                    {attachmentPreview ? (
+                      <img
+                        src={attachmentPreview}
+                        alt="Bukti pembayaran"
+                        className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
+                        <FileText size={24} className="text-primary" />
+                      </div>
+                    )}
 
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-secondary">
@@ -562,8 +577,19 @@ const PurchaseRequestPaymentModal = ({
                       </p>
 
                       <p className="text-xs text-muted">
-                        {(attachmentFile.size / 1024).toFixed(1)} KB
+                        {attachmentFile.size >= 1024 * 1024
+                          ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
+                          : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
                       </p>
+
+                      {uploadProgress !== null && (
+                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                          <div
+                            className="h-full bg-primary transition-all"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex gap-2">
@@ -572,7 +598,7 @@ const PurchaseRequestPaymentModal = ({
                         <input
                           hidden
                           type="file"
-                          accept="image/*"
+                          accept={ATTACHMENT_ACCEPT}
                           onChange={handleUpload}
                           disabled={formLoading}
                         />
@@ -614,7 +640,11 @@ const PurchaseRequestPaymentModal = ({
             {formLoading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                {masterLoading ? "Memuat Data..." : "Memproses..."}
+                {masterLoading
+                  ? "Memuat Data..."
+                  : uploadProgress !== null && uploadProgress < 100
+                    ? `Upload ${uploadProgress}%`
+                    : "Memproses..."}
               </>
             ) : (
               <>
