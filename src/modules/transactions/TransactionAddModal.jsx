@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  FileText,
   ImagePlus,
   Loader2,
   Save,
@@ -10,13 +11,22 @@ import {
 } from "lucide-react";
 
 import Loading from "../../components/Loading";
+import AttachmentFileName from "../../components/AttachmentFileName";
+import AttachmentPreviewModal from "../../components/AttachmentPreviewModal";
 
 import {
   createTransaction,
   getAccountDropdown,
   getCategoryDropdown,
-  uploadAttachment,
 } from "./transaction.service";
+
+// Upload & validasi lampiran (gambar/PDF) memakai helper yang sama dengan
+// pembayaran pengajuan: PDF diarahkan ke endpoint document CDN.
+import {
+  ATTACHMENT_ACCEPT,
+  uploadAttachment,
+  validateAttachment,
+} from "../purchase-requests/purchase-request.service";
 
 import { formatCurrencyInput, parseCurrencyInput } from "../../utils/currency";
 import swal from "../../lib/swal";
@@ -52,6 +62,9 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
 
   const [attachmentFile, setAttachmentFile] = useState(null);
   const [attachmentPreview, setAttachmentPreview] = useState("");
+
+  const [uploadProgress, setUploadProgress] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   /* ==========================
       Helper
@@ -187,12 +200,30 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
 
     if (!file) return;
 
+    const error = validateAttachment(file);
+
+    if (error) {
+      swal.fire({
+        icon: "warning",
+        title: "File Tidak Valid",
+        text: error,
+      });
+
+      target.value = "";
+      return;
+    }
+
     if (attachmentPreview) {
       URL.revokeObjectURL(attachmentPreview);
     }
 
     setAttachmentFile(file);
-    setAttachmentPreview(URL.createObjectURL(file));
+    // Preview thumbnail hanya untuk gambar
+    setAttachmentPreview(
+      file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+    );
+
+    target.value = "";
   };
 
   const handleRemoveAttachment = () => {
@@ -220,7 +251,9 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
       let uploadedAttachmentUrl = "";
 
       if (attachmentFile) {
-        const result = await uploadAttachment(attachmentFile);
+        const result = await uploadAttachment(attachmentFile, {
+          onProgress: setUploadProgress,
+        });
         uploadedAttachmentUrl = result.url;
       }
 
@@ -246,10 +279,14 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
       swal.fire({
         icon: "error",
         title: "Gagal",
-        text: error.response?.data?.message ?? "Terjadi kesalahan.",
+        text:
+          error.response?.data?.message ??
+          error.message ??
+          "Terjadi kesalahan.",
       });
     } finally {
       setSaving(false);
+      setUploadProgress(null);
     }
   };
 
@@ -506,7 +543,7 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
                     Attachment & Reference
                 ========================== */}
 
-                <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr]">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-secondary">
                       Reference Number
@@ -536,31 +573,51 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
                         <input
                           hidden
                           type="file"
-                          accept="image/*"
+                          accept={ATTACHMENT_ACCEPT}
                           onChange={handleUpload}
                         />
 
                         <ImagePlus size={18} className="text-primary" />
 
-                        <span className="text-sm font-medium">Pilih Bukti</span>
+                        <span className="text-sm font-medium">
+                          Pilih Bukti (Gambar / PDF)
+                        </span>
                       </label>
                     ) : (
                       <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={attachmentPreview}
-                            alt="Attachment"
-                            className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
-                          />
+                          {attachmentPreview ? (
+                            <img
+                              src={attachmentPreview}
+                              alt="Attachment"
+                              className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
+                              <FileText size={22} className="text-primary" />
+                            </div>
+                          )}
 
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-semibold text-secondary">
-                              {attachmentFile.name}
-                            </p>
+                            <AttachmentFileName
+                              name={attachmentFile.name}
+                              onClick={() => setPreviewOpen(true)}
+                            />
 
                             <p className="text-xs text-muted">
-                              {(attachmentFile.size / 1024).toFixed(1)} KB
+                              {attachmentFile.size >= 1024 * 1024
+                                ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
+                                : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
                             </p>
+
+                            {uploadProgress !== null && (
+                              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                                <div
+                                  className="h-full bg-primary transition-all"
+                                  style={{ width: `${uploadProgress}%` }}
+                                />
+                              </div>
+                            )}
                           </div>
 
                           <div className="flex gap-2">
@@ -569,7 +626,7 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
                               <input
                                 hidden
                                 type="file"
-                                accept="image/*"
+                                accept={ATTACHMENT_ACCEPT}
                                 onChange={handleUpload}
                               />
                             </label>
@@ -616,7 +673,9 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
                       {saving ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          Menyimpan...
+                          {uploadProgress !== null && uploadProgress < 100
+                            ? `Upload ${uploadProgress}%`
+                            : "Menyimpan..."}
                         </>
                       ) : (
                         <>
@@ -632,6 +691,12 @@ const TransactionAddModal = ({ open, onClose, onSuccess }) => {
           </div>
         </form>
       </div>
+
+      <AttachmentPreviewModal
+        open={previewOpen}
+        file={attachmentFile}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   );
 };

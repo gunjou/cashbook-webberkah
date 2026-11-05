@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  FileText,
   ImagePlus,
   Loader2,
   Save,
@@ -10,14 +11,23 @@ import {
 } from "lucide-react";
 
 import Loading from "../../components/Loading";
+import AttachmentFileName from "../../components/AttachmentFileName";
+import AttachmentPreviewModal from "../../components/AttachmentPreviewModal";
 
 import {
   getAccountDropdown,
   getCategoryDropdown,
   getTransactionDetail,
   updateTransaction,
-  uploadAttachment,
 } from "./transaction.service";
+
+// Upload & validasi lampiran (gambar/PDF) memakai helper yang sama dengan
+// pembayaran pengajuan: PDF diarahkan ke endpoint document CDN.
+import {
+  ATTACHMENT_ACCEPT,
+  uploadAttachment,
+  validateAttachment,
+} from "../purchase-requests/purchase-request.service";
 
 import { formatCurrencyInput, parseCurrencyInput } from "../../utils/currency";
 import swal from "../../lib/swal";
@@ -37,6 +47,9 @@ const initialForm = {
   attachment_url: "",
 };
 
+// Lampiran lama tanpa ekstensi .pdf tetap diperlakukan sebagai gambar.
+const isPdfUrl = (url = "") => /\.pdf$/i.test(url.split(/[?#]/)[0]);
+
 const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
   /* ==========================
       State
@@ -54,6 +67,9 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
   const [attachmentFile, setAttachmentFile] = useState(null);
   const [attachmentPreview, setAttachmentPreview] = useState("");
   const [attachmentName, setAttachmentName] = useState("");
+
+  const [uploadProgress, setUploadProgress] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   /* ==========================
       Helper
@@ -139,7 +155,11 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
         attachment_url: detail.attachment_url || "",
       });
 
-      setAttachmentPreview(detail.attachment_url || "");
+      setAttachmentPreview(
+        detail.attachment_url && !isPdfUrl(detail.attachment_url)
+          ? detail.attachment_url
+          : "",
+      );
 
       if (detail.attachment_url) {
         const fileName = detail.attachment_url.split("/").pop();
@@ -203,10 +223,23 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
     }
   };
 
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
+  const handleUpload = ({ target }) => {
+    const file = target.files?.[0];
 
     if (!file) return;
+
+    const error = validateAttachment(file);
+
+    if (error) {
+      swal.fire({
+        icon: "warning",
+        title: "File Tidak Valid",
+        text: error,
+      });
+
+      target.value = "";
+      return;
+    }
 
     if (attachmentPreview.startsWith("blob:")) {
       URL.revokeObjectURL(attachmentPreview);
@@ -214,9 +247,14 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
     setAttachmentFile(file);
 
-    setAttachmentPreview(URL.createObjectURL(file));
+    // Preview thumbnail hanya untuk gambar
+    setAttachmentPreview(
+      file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+    );
 
     setAttachmentName(file.name);
+
+    target.value = "";
   };
 
   const handleRemoveAttachment = () => {
@@ -250,7 +288,9 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
       let attachmentUrl = form.attachment_url;
 
       if (attachmentFile) {
-        const result = await uploadAttachment(attachmentFile);
+        const result = await uploadAttachment(attachmentFile, {
+          onProgress: setUploadProgress,
+        });
         attachmentUrl = result.url;
       }
 
@@ -273,10 +313,14 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
       swal.fire({
         icon: "error",
         title: "Gagal",
-        text: error.response?.data?.message ?? "Terjadi kesalahan.",
+        text:
+          error.response?.data?.message ??
+          error.message ??
+          "Terjadi kesalahan.",
       });
     } finally {
       setSaving(false);
+      setUploadProgress(null);
     }
   };
 
@@ -545,7 +589,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                     Attachment & Reference
                 ========================== */}
 
-                <div className="grid gap-4 lg:grid-cols-[1fr_1.3fr]">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-secondary">
                       Reference Number
@@ -570,39 +614,48 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                       </span>
                     </label>
 
-                    {!attachmentPreview ? (
+                    {!attachmentFile && !form.attachment_url ? (
                       <label className="flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-surface transition hover:border-primary hover:bg-primary/5">
                         <input
                           hidden
                           type="file"
-                          accept="image/*"
+                          accept={ATTACHMENT_ACCEPT}
                           onChange={handleUpload}
                         />
 
                         <ImagePlus size={18} className="text-primary" />
 
-                        <span className="text-sm font-medium">Pilih Bukti</span>
+                        <span className="text-sm font-medium">
+                          Pilih Bukti (Gambar / PDF)
+                        </span>
                       </label>
                     ) : (
                       <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                         <div className="flex items-center gap-3">
-                          <img
-                            src={attachmentPreview}
-                            alt="Attachment"
-                            className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
-                          />
+                          {attachmentPreview ? (
+                            <img
+                              src={attachmentPreview}
+                              alt="Attachment"
+                              className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
+                              <FileText size={22} className="text-primary" />
+                            </div>
+                          )}
 
                           <div className="min-w-0 flex-1">
-                            <p className="max-w-[100px] md:max-w-[150px] truncate text-sm font-semibold text-secondary">
-                              {attachmentFile
-                                ? attachmentFile.name
-                                : attachmentName}
-                            </p>
+                            <AttachmentFileName
+                              name={attachmentFile ? attachmentFile.name : attachmentName}
+                              onClick={() => setPreviewOpen(true)}
+                            />
 
                             <p className="text-xs text-muted">
                               {attachmentFile ? (
                                 <p className="text-xs text-muted">
-                                  {(attachmentFile.size / 1024).toFixed(1)} KB
+                                  {attachmentFile.size >= 1024 * 1024
+                                ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
+                                : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
                                 </p>
                               ) : (
                                 <p className="text-xs text-muted">
@@ -610,6 +663,15 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                                 </p>
                               )}
                             </p>
+
+                            {uploadProgress !== null && (
+                              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                                <div
+                                  className="h-full bg-primary transition-all"
+                                  style={{ width: `${uploadProgress}%` }}
+                                />
+                              </div>
+                            )}
                           </div>
 
                           <div className="flex gap-2">
@@ -618,7 +680,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                               <input
                                 hidden
                                 type="file"
-                                accept="image/*"
+                                accept={ATTACHMENT_ACCEPT}
                                 onChange={handleUpload}
                               />
                             </label>
@@ -665,7 +727,9 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                       {saving ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          Menyimpan...
+                          {uploadProgress !== null && uploadProgress < 100
+                            ? `Upload ${uploadProgress}%`
+                            : "Menyimpan..."}
                         </>
                       ) : (
                         <>
@@ -681,6 +745,13 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
           </div>
         </form>
       </div>
+
+      <AttachmentPreviewModal
+        open={previewOpen}
+        file={attachmentFile}
+        url={form.attachment_url}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   );
 };

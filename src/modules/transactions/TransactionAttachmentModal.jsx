@@ -21,7 +21,8 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
 
   if (!open) return null;
 
-  const imageUrl = transaction?.attachment_url;
+  const fileUrl = transaction?.attachment_url;
+  const isPdf = /\.pdf$/i.test((fileUrl || "").split(/[?#]/)[0]);
 
   return (
     <div
@@ -56,13 +57,19 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
         </div>
 
         {/* ==========================
-            Image
+            Preview
         ========================== */}
 
         <div className="flex flex-1 items-center justify-center overflow-auto bg-surface p-6">
-          {imageUrl ? (
+          {fileUrl && isPdf ? (
+            <iframe
+              src={fileUrl}
+              title="Bukti Transaksi"
+              className="h-[70vh] w-full rounded-xl border border-border bg-white shadow-card"
+            />
+          ) : fileUrl ? (
             <img
-              src={imageUrl}
+              src={fileUrl}
               alt="Attachment"
               className="max-h-[70vh] max-w-full rounded-xl border border-border bg-white object-contain shadow-card"
             />
@@ -84,9 +91,9 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
             {transaction?.reference_number || "-"}
           </div>
 
-          {imageUrl && (
+          {fileUrl && (
             <a
-              href={imageUrl}
+              href={fileUrl}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm transition hover:bg-primary hover:text-white"

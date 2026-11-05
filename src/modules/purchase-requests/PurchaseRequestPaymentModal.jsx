@@ -14,6 +14,8 @@ import {
   ATTACHMENT_ACCEPT,
   validateAttachment,
 } from "./purchase-request.service";
+import AttachmentFileName from "../../components/AttachmentFileName";
+import AttachmentPreviewModal from "../../components/AttachmentPreviewModal";
 import swal from "../../lib/swal";
 import { formatCurrencyInput } from "../../utils/currency";
 
@@ -49,6 +51,7 @@ const PurchaseRequestPaymentModal = ({
 
   const [attachmentFile, setAttachmentFile] = useState(null);
   const [attachmentPreview, setAttachmentPreview] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -572,9 +575,10 @@ const PurchaseRequestPaymentModal = ({
                     )}
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-secondary">
-                        {attachmentFile.name}
-                      </p>
+                      <AttachmentFileName
+                        name={attachmentFile.name}
+                        onClick={() => setPreviewOpen(true)}
+                      />
 
                       <p className="text-xs text-muted">
                         {attachmentFile.size >= 1024 * 1024
@@ -655,6 +659,12 @@ const PurchaseRequestPaymentModal = ({
           </button>
         </div>
       </div>
+
+      <AttachmentPreviewModal
+        open={previewOpen}
+        file={attachmentFile}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   );
 };
