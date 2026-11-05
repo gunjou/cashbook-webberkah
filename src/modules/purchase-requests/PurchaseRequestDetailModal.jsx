@@ -564,6 +564,11 @@ const DetailField = ({ label, value }) => (
   </div>
 );
 
+// Ekstensi diambil dari URL karena bukti bayar bisa gambar atau PDF.
+// URL lama tanpa ekstensi tetap diperlakukan sebagai gambar.
+const getProofExtension = (url = "") =>
+  url.split(/[?#]/)[0].match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase() || "jpg";
+
 const StatusHistory = ({ data, onAttachment }) => {
   const normalStatuses = ["REQUESTED", "REVIEWED", "APPROVED", "PAID"];
   const rejectedStatuses = ["REQUESTED", "REVIEWED", "REJECTED"];
@@ -675,13 +680,18 @@ const StatusHistory = ({ data, onAttachment }) => {
                           type="button"
                           onClick={() =>
                             onAttachment?.({
-                              name: "bukti_pembayaran.jpg",
+                              name: `bukti_pembayaran.${getProofExtension(data.payment.bukti_bayar)}`,
                               path: data.payment.bukti_bayar,
                             })
                           }
                           className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-[9px] font-black uppercase tracking-wider text-white transition-all hover:opacity-90"
                         >
-                          <FileImage size={13} />
+                          {getProofExtension(data.payment.bukti_bayar) ===
+                          "pdf" ? (
+                            <FileText size={13} />
+                          ) : (
+                            <FileImage size={13} />
+                          )}
                           Lihat Bukti
                         </button>
                       ) : (
