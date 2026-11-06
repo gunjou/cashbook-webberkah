@@ -8,16 +8,9 @@ const RENDER_MARGIN = "600px";
 let pdfjsPromise = null;
 
 // Dimuat saat dibutuhkan supaya tidak membebani bundle awal. Build legacy dipakai
-// agar jalan di browser HP lama. new Worker membuat webpack mengeluarkan worker
-// sebagai .js, karena banyak server mengirim .mjs dengan MIME yang salah.
+// agar jalan di browser HP lama.
 const loadPdfjs = () => {
-  pdfjsPromise ??= import("pdfjs-dist/legacy/build/pdf.mjs").then((pdfjs) => {
-    pdfjs.GlobalWorkerOptions.workerPort = new Worker(
-      new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url),
-    );
-
-    return pdfjs;
-  });
+  pdfjsPromise ??= import("pdfjs-dist/legacy/build/pdf.mjs");
 
   return pdfjsPromise;
 };
@@ -57,11 +50,7 @@ const PdfPage = ({ page, width, scrollerRef, onError }) => {
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
 
-    const task = page.render({
-      canvas,
-      canvasContext: canvas.getContext("2d"),
-      viewport,
-    });
+    const task = page.render({ canvas, viewport });
 
     task.promise.catch((error) => {
       if (error?.name === "RenderingCancelledException") return;
@@ -98,14 +87,22 @@ const PdfViewer = ({ blob, onError }) => {
   useEffect(() => {
     let cancelled = false;
     let loadingTask = null;
+    let worker = null;
 
     const load = async () => {
       try {
         const pdfjs = await loadPdfjs();
-        const data = await blob.arrayBuffer();
+        const data = new Uint8Array(await blob.arrayBuffer());
 
         if (cancelled) return;
 
+        // Satu worker per dokumen: worker yang dokumennya sudah ditutup tidak bisa
+        // dipakai lagi, sehingga PDF berikutnya gagal dibuka. Bukan workerSrc seperti
+        // di Vite, karena CRA menjalankan babel ke file .mjs dan merusak hasilnya.
+        worker = new Worker(
+          new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url),
+        );
+        pdfjs.GlobalWorkerOptions.workerPort = worker;
         loadingTask = pdfjs.getDocument({ data });
 
         const pdf = await loadingTask.promise;
@@ -129,7 +126,7 @@ const PdfViewer = ({ blob, onError }) => {
     return () => {
       cancelled = true;
       setPages([]);
-      loadingTask?.destroy();
+      loadingTask?.destroy().finally(() => worker.terminate());
     };
   }, [blob, onError]);
 

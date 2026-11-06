@@ -217,7 +217,7 @@ const DashboardPage = () => {
           {/* Cashflow */}
 
           <div className="xl:col-span-2 p-5 panel-glass rounded-card">
-            <div className="mb-4 flex items-start justify-between">
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="font-semibold text-primary-strong">Cashflow Trend</h2>
 
@@ -251,7 +251,7 @@ const DashboardPage = () => {
           {/* Recent Transaction */}
 
           <div className="p-5 panel-glass rounded-card">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="font-semibold text-primary-strong">
                   Recent Transaction
