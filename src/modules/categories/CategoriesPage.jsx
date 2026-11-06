@@ -15,7 +15,7 @@ import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 
 import MainLayout from "../../layouts/MainLayout";
 import Loading from "../../components/Loading";
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import {
   createCategory,
   deleteCategory,
@@ -64,7 +64,7 @@ const CategoryPage = () => {
 
       setCategories(data);
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -103,7 +103,7 @@ const CategoryPage = () => {
 
       await fetchCategories();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Kategori berhasil ditambahkan.",
@@ -111,7 +111,7 @@ const CategoryPage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -127,7 +127,7 @@ const CategoryPage = () => {
 
       await fetchCategories();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Kategori berhasil diperbarui.",
@@ -135,7 +135,7 @@ const CategoryPage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -144,7 +144,7 @@ const CategoryPage = () => {
   };
 
   const handleDelete = async (id) => {
-    const result = await swal.fire({
+    const result = await notify.fire({
       icon: "warning",
       title: "Hapus Kategori",
       text: "Kategori akan dihapus secara permanen.",
@@ -160,7 +160,7 @@ const CategoryPage = () => {
 
       await fetchCategories();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Kategori berhasil dihapus.",
@@ -168,7 +168,7 @@ const CategoryPage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -178,14 +178,14 @@ const CategoryPage = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-4 sm:p-6">
         {/* Header */}
 
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">Kategori</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">Kategori</h1>
 
-            <p className="mt-1 text-muted">
+            <p className="mt-1 text-neutral-600">
               Kelola seluruh kategori transaksi perusahaan.
             </p>
           </div>
@@ -196,7 +196,7 @@ const CategoryPage = () => {
             {/* <div ref={exportRef} className="relative">
               <button
                 onClick={() => setOpenExport((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary/15"
+                className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-ink transition hover:bg-primary/15 glass-button"
               >
                 <Download size={18} />
                 Export
@@ -209,10 +209,10 @@ const CategoryPage = () => {
               </button>
 
               {openExport && (
-                <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card lg:left-0 lg:right-auto">
+                <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden lg:left-0 lg:right-auto panel-dialog rounded-card">
                   <button
                     onClick={handleExportPDF}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-text transition hover:bg-red-500/10 hover:text-red-600"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-ink transition hover:bg-red-500/10 hover:text-red-600"
                   >
                     <FileText size={18} />
                     Export PDF
@@ -220,7 +220,7 @@ const CategoryPage = () => {
 
                   <button
                     onClick={handleExportExcel}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-text transition hover:bg-green-500/10 hover:text-green-600"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-sm text-ink transition hover:bg-green-500/10 hover:text-green-600"
                   >
                     <FileSpreadsheet size={18} />
                     Export Excel
@@ -233,7 +233,7 @@ const CategoryPage = () => {
 
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full glass-primary px-4 py-3 font-semibold transition hover:opacity-90"
             >
               <Plus size={18} />
               Tambah Kategori
@@ -246,7 +246,7 @@ const CategoryPage = () => {
         <div className="relative">
           <Search
             size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600"
           />
 
           <input
@@ -254,15 +254,15 @@ const CategoryPage = () => {
             placeholder="Cari kategori..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-4 text-text outline-none transition focus:border-primary"
+            className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-3 pl-11 pr-4 text-ink outline-none transition"
           />
         </div>
 
         {/* Desktop Table */}
 
-        <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-card lg:block">
+        <div className="hidden overflow-hidden lg:block panel-glass rounded-card">
           <table className="w-full">
-            <thead className="bg-secondary text-white">
+            <thead className="bg-primary-100 text-ink">
               <tr>
                 <th className="w-20 px-5 py-3 text-center text-md font-semibold">
                   No
@@ -293,7 +293,7 @@ const CategoryPage = () => {
                 </tr>
               ) : filteredCategories.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-muted">
+                  <td colSpan={4} className="py-12 text-center text-neutral-600">
                     Belum ada kategori.
                   </td>
                 </tr>
@@ -301,15 +301,15 @@ const CategoryPage = () => {
                 filteredCategories.map((category, index) => (
                   <tr
                     key={category.id_category}
-                    className="border-t border-border transition"
+                    className="border-t border-primary-200 transition"
                   >
                     <td className="px-5 py-2 text-center">{index + 1}</td>
 
-                    <td className="px-5 py-2 font-medium text-secondary">
+                    <td className="px-5 py-2 font-medium text-primary-strong">
                       {category.name}
                     </td>
 
-                    <td className="max-w-xl truncate px-5 py-2 text-text">
+                    <td className="max-w-xl truncate px-5 py-2 text-ink">
                       {category.description}
                     </td>
 
@@ -322,14 +322,14 @@ const CategoryPage = () => {
                           onClick={() =>
                             setEditingCategoryId(category.id_category)
                           }
-                          className="rounded-lg p-2 text-text transition hover:bg-primary hover:text-white"
+                          className="rounded-full p-2 text-ink transition hover:text-ink glass-button"
                         >
                           <Pencil size={18} />
                         </button>
 
                         <button
                           onClick={() => handleDelete(category.id_category)}
-                          className="rounded-lg p-2 text-red-600 transition hover:bg-red-500/10"
+                          className="rounded-full p-2 text-red-600 transition glass-button"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -345,26 +345,26 @@ const CategoryPage = () => {
 
         <div className="space-y-4 lg:hidden">
           {loading ? (
-            <div className="rounded-xl border border-border bg-card p-6 text-center text-muted shadow-card">
+            <div className="p-6 text-center text-neutral-600 panel-glass rounded-card">
               <Loading.Data text="Memuat kategori..." />
             </div>
           ) : filteredCategories.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-6 text-center text-muted shadow-card">
+            <div className="p-6 text-center text-neutral-600 panel-glass rounded-card">
               Belum ada kategori.
             </div>
           ) : (
             filteredCategories.map((category) => (
               <div
                 key={category.id_category}
-                className="rounded-xl border border-border bg-card p-4 shadow-card transition"
+                className="p-4 transition panel-glass rounded-card"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-secondary">
+                    <h3 className="font-semibold text-primary-strong">
                       {category.name}
                     </h3>
 
-                    <p className="mt-2 text-sm leading-6 text-text">
+                    <p className="mt-2 text-sm leading-6 text-ink">
                       {category.description}
                     </p>
                   </div>
@@ -376,14 +376,14 @@ const CategoryPage = () => {
                 >
                   <button
                     onClick={() => setEditingCategoryId(category.id_category)}
-                    className="rounded-lg p-2 text-text transition hover:bg-primary/15"
+                    className="rounded-full p-2 text-ink transition glass-button"
                   >
                     <Pencil size={18} />
                   </button>
 
                   <button
                     onClick={() => handleDelete(category.id_category)}
-                    className="rounded-lg p-2 text-red-600 transition hover:bg-red-500/10"
+                    className="rounded-full p-2 text-red-600 transition glass-button"
                   >
                     <Trash2 size={18} />
                   </button>

@@ -10,15 +10,15 @@ import CurrencyText from "../../components/CurrencyText";
 const TransactionSummary = ({ summary, loading = false }) => {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-3 rounded-xl border border-border bg-card p-3 font-mono shadow-card lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 p-3 font-mono lg:grid-cols-4 panel-glass rounded-card">
         {[1, 2, 3, 4].map((item) => (
           <div key={item} className="flex animate-pulse items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-neutral-200 dark:bg-neutral-700" />
+            <div className="h-10 w-10 rounded-lg bg-neutral-200" />
 
             <div className="flex-1">
-              <div className="h-3 w-20 rounded bg-neutral-200 dark:bg-neutral-700" />
+              <div className="h-3 w-20 rounded bg-neutral-200" />
 
-              <div className="mt-2 h-4 w-28 rounded bg-neutral-200 dark:bg-neutral-700" />
+              <div className="mt-2 h-4 w-28 rounded bg-neutral-200" />
             </div>
           </div>
         ))}
@@ -27,7 +27,7 @@ const TransactionSummary = ({ summary, loading = false }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 rounded-xl border border-border bg-card p-3 font-mono shadow-card lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 p-3 font-mono lg:grid-cols-4 panel-glass rounded-card">
       {/* Income */}
 
       <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ const TransactionSummary = ({ summary, loading = false }) => {
         </div>
 
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wide text-muted">
+          <p className="text-[11px] uppercase tracking-wide text-neutral-600">
             Pemasukan
           </p>
 
@@ -54,7 +54,7 @@ const TransactionSummary = ({ summary, loading = false }) => {
         </div>
 
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wide text-muted">
+          <p className="text-[11px] uppercase tracking-wide text-neutral-600">
             Pengeluaran
           </p>
 
@@ -72,7 +72,7 @@ const TransactionSummary = ({ summary, loading = false }) => {
         </div>
 
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wide text-muted">
+          <p className="text-[11px] uppercase tracking-wide text-neutral-600">
             Cashflow
           </p>
 
@@ -89,16 +89,16 @@ const TransactionSummary = ({ summary, loading = false }) => {
       {/* Transaction */}
 
       <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-secondary/10 p-2">
-          <ReceiptText size={22} className="text-secondary" />
+        <div className="rounded-full bg-primary-strong/10 p-2">
+          <ReceiptText size={22} className="text-primary-strong" />
         </div>
 
         <div className="min-w-0">
-          <p className="text-[11px] uppercase tracking-wide text-muted">
+          <p className="text-[11px] uppercase tracking-wide text-neutral-600">
             Transaksi
           </p>
 
-          <p className="text-sm font-bold text-secondary">
+          <p className="text-sm font-bold text-primary-strong">
             {summary.transaction_count}
           </p>
         </div>

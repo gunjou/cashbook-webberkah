@@ -50,8 +50,8 @@ const DashboardCashflowChart = ({ data, loading, period }) => {
     console.log(item);
 
     return (
-      <div className="min-w-[220px] rounded-xl border border-border bg-card p-4 lg:p-5 shadow-xl">
-        <p className="mb-3 font-semibold text-secondary">
+      <div className="min-w-[220px] p-4 lg:p-5 shadow-xl rounded-2xl glass-inset">
+        <p className="mb-3 font-semibold text-primary-strong">
           {formatTooltipDate(item.date, period)}
         </p>
 
@@ -60,7 +60,7 @@ const DashboardCashflowChart = ({ data, loading, period }) => {
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-[#8EC86A]" />
 
-              <span className="text-sm text-muted">IN</span>
+              <span className="text-sm text-neutral-600">IN</span>
             </div>
 
             <div className="text-sm font-medium">
@@ -72,7 +72,7 @@ const DashboardCashflowChart = ({ data, loading, period }) => {
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-[#F83A83]" />
 
-              <span className="text-sm text-muted">OUT</span>
+              <span className="text-sm text-neutral-600">OUT</span>
             </div>
 
             <div className="text-sm font-medium">

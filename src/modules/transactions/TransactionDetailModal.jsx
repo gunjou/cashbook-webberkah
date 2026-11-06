@@ -65,24 +65,24 @@ const TransactionDetailModal = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-secondary">
+            <h2 className="text-xl font-semibold text-primary-strong">
               Detail Transaksi
             </h2>
 
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 text-sm text-neutral-600">
               Informasi lengkap transaksi
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 transition hover:bg-surface"
+            className="rounded-full p-2 transition glass-button"
           >
             <X size={20} />
           </button>
@@ -99,7 +99,7 @@ const TransactionDetailModal = ({
                 {/* Nominal */}
 
                 <div className="mb-8 text-center">
-                  <p className="text-sm uppercase tracking-[0.25em] text-muted">
+                  <p className="text-sm uppercase tracking-[0.25em] text-neutral-600">
                     {transaction.transaction_type === "IN"
                       ? "PEMASUKAN"
                       : "PENGELUARAN"}
@@ -114,7 +114,7 @@ const TransactionDetailModal = ({
                     <CurrencyText value={transaction.amount} />
                   </h1>
 
-                  <p className="mt-3 text-lg font-medium text-text">
+                  <p className="mt-3 text-lg font-medium text-ink">
                     {transaction.transaction_description}
                   </p>
                 </div>
@@ -169,10 +169,10 @@ const TransactionDetailModal = ({
         {/* Footer */}
 
         {!loading && transaction && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-primary-200 px-6 py-4">
             <button
               onClick={onClose}
-              className="rounded-lg border border-border px-4 py-2 transition hover:bg-surface"
+              className="rounded-lg border border-primary-200 px-4 py-2 transition hover:bg-white"
             >
               Tutup
             </button>
@@ -181,7 +181,7 @@ const TransactionDetailModal = ({
               {transaction.attachment_url && (
                 <button
                   onClick={() => onViewAttachment?.(transaction)}
-                  className="rounded-lg border border-border px-4 py-2 transition hover:bg-surface"
+                  className="rounded-lg border border-primary-200 px-4 py-2 transition hover:bg-white"
                 >
                   Lihat Bukti
                 </button>
@@ -193,7 +193,7 @@ const TransactionDetailModal = ({
                   onClose?.();
                   onEditTransaction?.(transaction.id_transaction);
                 }}
-                className="rounded-lg bg-primary px-4 py-2 text-white transition hover:opacity-90"
+                className="rounded-full glass-primary px-4 py-2 transition hover:opacity-90"
               >
                 Edit Transaksi
               </button>
@@ -210,11 +210,11 @@ const InfoItem = ({ icon, label, value, subValue }) => (
     {icon && <div className="mt-1 text-primary">{icon}</div>}
 
     <div>
-      <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-neutral-600">{label}</p>
 
-      <p className="mt-1 font-medium text-text">{value}</p>
+      <p className="mt-1 font-medium text-ink">{value}</p>
 
-      {subValue && <p className="mt-1 text-sm text-muted">{subValue}</p>}
+      {subValue && <p className="mt-1 text-sm text-neutral-600">{subValue}</p>}
     </div>
   </div>
 );

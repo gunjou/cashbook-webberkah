@@ -9,7 +9,7 @@ const DashboardSummary = ({ summary, loading }) => {
       subtitle: "Saldo seluruh account",
       value: summary.current_balance,
       icon: Wallet,
-      iconClass: "bg-gray-200 text-secondary",
+      iconClass: "bg-neutral-200 text-primary-strong",
     },
     {
       title: "Income",
@@ -42,39 +42,39 @@ const DashboardSummary = ({ summary, loading }) => {
         return (
           <div
             key={card.title}
-            className="rounded-xl border border-border bg-card p-4 shadow-card"
+            className="p-4 panel-glass rounded-card"
           >
             {loading ? (
               <div className="animate-pulse">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     {/* Title */}
-                    <div className="h-3 w-24 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="h-3 w-24 rounded bg-neutral-200" />
                     {/* Amount */}
-                    <div className="mt-4 h-6 w-36 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="mt-4 h-6 w-36 rounded bg-neutral-200" />
                     {/* Subtitle */}
-                    <div className="mt-3 h-3 w-28 rounded bg-gray-200 dark:bg-gray-700" />
+                    <div className="mt-3 h-3 w-28 rounded bg-neutral-200" />
                   </div>
                   {/* Icon */}
-                  <div className="ml-3 h-10 w-10 rounded-lg bg-gray-200 dark:bg-gray-700" />
+                  <div className="ml-3 h-10 w-10 rounded-lg bg-neutral-200" />
                 </div>
               </div>
             ) : (
               <div className="flex items-start justify-between transition hover:-translate-y-0.5">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted">
+                  <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">
                     {card.title}
                   </p>
 
                   <div
                     className={`mt-2 text-2xl font-bold ${
-                      card.value < 0 ? "text-red-400" : "text-secondary"
+                      card.value < 0 ? "text-red-400" : "text-primary-strong"
                     }`}
                   >
                     <CurrencyText value={card.value} />
                   </div>
 
-                  <p className="mt-1 text-xs text-muted">{card.subtitle}</p>
+                  <p className="mt-1 text-xs text-neutral-600">{card.subtitle}</p>
                 </div>
 
                 <div

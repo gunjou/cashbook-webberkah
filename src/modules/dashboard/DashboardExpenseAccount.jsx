@@ -18,18 +18,18 @@ const CustomTooltip = ({ active, payload }) => {
   const item = payload[0].payload;
 
   return (
-    <div className="rounded-lg z-[999] border border-border bg-card p-3 shadow-lg">
-      <p className="font-semibold text-secondary">{item.account_name}</p>
+    <div className="z-[999] p-3 panel-dialog rounded-card">
+      <p className="font-semibold text-primary-strong">{item.account_name}</p>
 
       <div className="mt-2 space-y-1 text-sm">
         <div className="flex justify-between gap-5">
-          <span className="text-muted">Amount</span>
+          <span className="text-neutral-600">Amount</span>
 
           <CurrencyText value={item.amount} />
         </div>
 
         <div className="flex justify-between gap-5">
-          <span className="text-muted">Percentage</span>
+          <span className="text-neutral-600">Percentage</span>
 
           <span className="font-medium">{item.percentage}%</span>
         </div>
@@ -45,7 +45,7 @@ const DashboardExpenseAccount = ({ data = [], loading = false }) => {
 
   if (!data.length) {
     return (
-      <div className="flex h-[220px] items-center justify-center text-sm text-muted">
+      <div className="flex h-[220px] items-center justify-center text-sm text-neutral-600">
         Belum ada data.
       </div>
     );
@@ -83,11 +83,11 @@ const DashboardExpenseAccount = ({ data = [], loading = false }) => {
         {/* Center */}
 
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold text-secondary">
+          <span className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">
             {data.length}
           </span>
 
-          <span className="text-xs text-muted">Accounts</span>
+          <span className="text-xs text-neutral-600">Accounts</span>
         </div>
       </div>
 
@@ -97,7 +97,7 @@ const DashboardExpenseAccount = ({ data = [], loading = false }) => {
         {data.map((item, index) => (
           <div
             key={item.id_account}
-            className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
+            className="flex items-center justify-between rounded-lg border border-primary-200 px-3 py-2"
           >
             <div className="flex items-center gap-2 overflow-hidden">
               <span

@@ -1,27 +1,7 @@
 import { ArrowDown, ArrowUp, CheckCircle2, Flag } from "lucide-react";
 import CurrencyText from "../../components/CurrencyText";
 import Loading from "../../components/Loading";
-
-const STATUS_STYLE = {
-  REQUESTED: {
-    label: "Requested",
-    className: "bg-yellow-500/10 text-yellow-600",
-  },
-  REVIEWED: {
-    label: "Reviewed",
-    className: "bg-emerald-500/10 text-emerald-600",
-  },
-  APPROVED: { label: "Approved", className: "bg-green-500/10 text-green-600" },
-  REJECTED: { label: "Rejected", className: "bg-red-500/10 text-red-600" },
-  PAID: { label: "Paid", className: "bg-sky-500/10 text-sky-600" },
-  ACTIVE: { label: "Aktif", className: "bg-primary/10 text-secondary" },
-};
-
-const PRIORITY_STYLE = {
-  NORMAL: { label: "Normal", className: "bg-surface text-muted" },
-  URGENT: { label: "Urgent", className: "bg-yellow-500/10 text-yellow-600" },
-  TOP_URGENT: { label: "Top Urgent", className: "bg-red-500/10 text-red-600" },
-};
+import { PRIORITY_STYLE, STATUS_STYLE } from "../../utils/status";
 
 const getInitials = (name = "") =>
   name
@@ -63,7 +43,7 @@ const PurchaseRequestTable = ({
 
   if (loading) {
     return (
-      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-card">
+      <div className="overflow-hidden panel-glass rounded-card">
         <div className="flex h-64 items-center justify-center">
           <Loading.Data text="Memuat pengajuan..." />
         </div>
@@ -73,13 +53,15 @@ const PurchaseRequestTable = ({
 
   if (!data.length) {
     return (
-      <div className="rounded-xl border border-border bg-card shadow-card">
+      <div className="panel-glass rounded-card">
         <div className="flex h-64 flex-col items-center justify-center px-5 text-center">
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             <Flag size={22} className="text-primary" />
           </div>
-          <p className="text-sm font-semibold text-secondary">Tidak Ada Data</p>
-          <p className="mt-1 text-xs text-muted">
+          <p className="text-sm font-semibold text-primary-strong">
+            Tidak Ada Data
+          </p>
+          <p className="mt-1 text-xs text-neutral-600">
             Belum terdapat data pengajuan pada filter yang dipilih.
           </p>
         </div>
@@ -88,7 +70,7 @@ const PurchaseRequestTable = ({
   }
 
   return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-border bg-card shadow-card">
+    <div className="w-full min-w-0 max-w-full overflow-hidden panel-glass rounded-card">
       <div
         className={`w-full min-w-0 max-w-full overflow-x-auto overflow-y-auto ${
           viewMode === "HISTORY"
@@ -98,7 +80,7 @@ const PurchaseRequestTable = ({
       >
         <table className="w-max min-w-[1100px] md:w-full md:min-w-0">
           <thead className="sticky top-0 z-20">
-            <tr className="border-b border-border bg-surface">
+            <tr className="border-b border-primary-200 bg-white">
               <th className="w-10 px-3 py-2 text-center">
                 <input
                   type="checkbox"
@@ -112,7 +94,7 @@ const PurchaseRequestTable = ({
                 />
               </th>
 
-              <th className="w-12 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-12 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 No
               </th>
 
@@ -121,7 +103,7 @@ const PurchaseRequestTable = ({
                   <button
                     type="button"
                     onClick={() => onSort?.("date")}
-                    className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
+                    className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-600 transition hover:text-primary-strong"
                   >
                     Pengajuan
                     {sortConfig?.key === "date" &&
@@ -134,17 +116,17 @@ const PurchaseRequestTable = ({
                 )}
 
                 {!enableSort && (
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                     Pengajuan
                   </span>
                 )}
               </th>
 
-              <th className="w-44 px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-44 px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 Pemohon
               </th>
 
-              <th className="min-w-[280px] px-4 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="min-w-[280px] px-4 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 Pekerjaan
               </th>
 
@@ -153,7 +135,7 @@ const PurchaseRequestTable = ({
                   <button
                     type="button"
                     onClick={() => onSort?.("priority")}
-                    className="mx-auto flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted transition hover:text-secondary"
+                    className="mx-auto flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-600 transition hover:text-primary-strong"
                   >
                     Priority
                     {sortConfig?.key === "priority" &&
@@ -164,27 +146,27 @@ const PurchaseRequestTable = ({
                       ))}
                   </button>
                 ) : (
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                     Priority
                   </span>
                 )}
               </th>
 
-              <th className="w-36 px-4 py-2 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-36 px-4 py-2 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 Total
               </th>
 
-              <th className="w-32 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-32 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 Status
               </th>
 
-              <th className="w-24 px-4 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-muted">
+              <th className="w-24 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
                 Aksi
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-primary-200">
             {data.map((item, index) => {
               const status = STATUS_STYLE[item.status] || STATUS_STYLE.ACTIVE;
 
@@ -211,21 +193,21 @@ const PurchaseRequestTable = ({
                     onClick={() => onDetail?.(item.id_request)}
                     className="cursor-pointer px-1 py-2 text-center"
                   >
-                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-[10px] font-semibold text-muted">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[11px] font-semibold text-neutral-600">
                       {String(startIndex + index + 1).padStart(2, "0")}
                     </span>
                   </td>
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-2"
+                    className="cursor-pointer px-2 py-2"
                   >
                     <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-medium text-muted whitespace-nowrap">
+                      <span className="text-[9px] font-medium text-neutral-600 whitespace-nowrap">
                         {item.request_number || "-"}
                       </span>
 
-                      <span className="text-xs font-semibold text-secondary whitespace-nowrap">
+                      <span className="text-xs font-semibold text-primary-strong whitespace-nowrap">
                         {formatDate(item.tanggal_request)}
                       </span>
                     </div>
@@ -233,21 +215,21 @@ const PurchaseRequestTable = ({
 
                   <td
                     onClick={() => onDetail?.(item.id_request)}
-                    className="cursor-pointer px-4 py-2"
+                    className="cursor-pointer px-2 py-2"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary">
-                        <span className="text-xs font-bold text-white">
+                        <span className="text-xs font-bold text-[var(--brand-on)]">
                           {getInitials(item.nama_pegawai)}
                         </span>
                       </div>
 
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold text-text">
+                        <p className="truncate text-xs font-semibold text-ink">
                           {item.nama_panggilan || "-"}
                         </p>
 
-                        <span className="mt-1 inline-block rounded-md bg-primary/10 px-2 py-1 text-[9px] font-medium text-secondary">
+                        <span className="mt-1 inline-block rounded-md bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary-strong">
                           {item.nama_departemen || "-"}
                         </span>
                       </div>
@@ -259,12 +241,12 @@ const PurchaseRequestTable = ({
                     className="cursor-pointer px-4 py-2"
                   >
                     <div className="max-w-[480px]">
-                      <p className="text-xs font-semibold leading-5 text-text">
+                      <p className="text-xs line-clamp-2 font-semibold leading-5 text-ink">
                         {item.note || item.nama_pekerjaan || "-"}
                       </p>
 
                       {item.note && item.nama_pekerjaan && (
-                        <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted">
+                        <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-neutral-600">
                           {item.nama_pekerjaan}
                         </p>
                       )}
@@ -276,7 +258,7 @@ const PurchaseRequestTable = ({
                     className="cursor-pointer px-4 py-2 text-center"
                   >
                     <span
-                      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[9px] font-bold uppercase ${priority.className}`}
+                      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold ${priority.className}`}
                     >
                       <Flag size={13} />
                       {priority.label}
@@ -287,7 +269,7 @@ const PurchaseRequestTable = ({
                     onClick={() => onDetail?.(item.id_request)}
                     className="cursor-pointer px-4 py-2 text-right"
                   >
-                    <span className="whitespace-nowrap text-sm font-bold text-secondary">
+                    <span className="whitespace-nowrap text-sm font-bold text-primary-strong">
                       <CurrencyText value={item.total_amount} />
                     </span>
                   </td>
@@ -297,7 +279,7 @@ const PurchaseRequestTable = ({
                     className="cursor-pointer px-4 py-2 text-center"
                   >
                     <span
-                      className={`inline-flex min-w-[80px] justify-center rounded-full px-3 py-1.5 text-[9px] font-semibold uppercase tracking-wide ${status.className}`}
+                      className={`inline-flex min-w-[80px] justify-center rounded-full px-3 py-1.5 text-xs font-semibold ${status.className}`}
                     >
                       {status.label}
                     </span>
@@ -308,14 +290,15 @@ const PurchaseRequestTable = ({
                       <button
                         type="button"
                         onClick={() => onPaid(item)}
-                        className="flex items-center justify-center rounded-lg bg-secondary px-2.5 py-1.5 text-white transition-all hover:bg-secondary-hover"
+                        className="ios-button"
                         title="Tandai Bayar"
                       >
-                        <div className="flex gap-1">
-                          <CheckCircle2 size={16} />
-
-                          <span className="text-[11px]">BAYAR</span>
-                        </div>
+                        <CheckCircle2
+                          size={16}
+                          strokeWidth={2}
+                          aria-hidden="true"
+                        />
+                        Bayar
                       </button>
                     )}
                   </td>

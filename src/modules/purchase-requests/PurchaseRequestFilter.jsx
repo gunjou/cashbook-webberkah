@@ -40,9 +40,9 @@ const PurchaseRequestFilter = ({
         ];
 
   return (
-    <div className="rounded-xl border border-border bg-card p-3 shadow-card">
+    <div className="p-3 panel-glass rounded-card">
       <div className="flex flex-col gap-2 lg:flex-row">
-        <div className="flex w-full max-w-full flex-wrap items-center gap-1 rounded-xl border border-border bg-surface p-1 lg:w-auto lg:shrink-0">
+        <div className="flex w-full max-w-full flex-wrap items-center gap-1 p-1 lg:w-auto lg:shrink-0 rounded-2xl glass-inset">
           {statusTabs.map((tab) => {
             const isActive = filter.status === tab.value;
 
@@ -53,7 +53,7 @@ const PurchaseRequestFilter = ({
                 onClick={() =>
                   setFilter((prev) => ({ ...prev, status: tab.value }))
                 }
-                className={`h-9 min-w-24 rounded-lg px-3 text-[10px] font-semibold uppercase tracking-wider transition ${isActive ? "bg-primary text-white shadow-sm" : "text-muted hover:bg-primary/10"}`}
+                className={`h-9 min-w-24 rounded-lg px-3 text-[11px] font-semibold uppercase tracking-wider transition ${isActive ? "glass-primary shadow-sm" : "text-neutral-600 hover:bg-primary/10"}`}
               >
                 {tab.label}
               </button>
@@ -65,21 +65,21 @@ const PurchaseRequestFilter = ({
           <div className="relative min-w-0 flex-1">
             <Search
               size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
             />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Cari pemohon, pekerjaan, keterangan..."
-              className="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-sm text-text outline-none transition focus:border-primary"
+              className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition"
             />
           </div>
 
           <div className="relative min-w-0 flex-1">
             <CalendarDays
               size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
             />
             <input
               type="date"
@@ -90,14 +90,14 @@ const PurchaseRequestFilter = ({
                   tanggal_mulai: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-sm text-text outline-none transition focus:border-primary"
+              className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition"
             />
           </div>
 
           <div className="relative min-w-0 flex-1">
             <CalendarDays
               size={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
             />
             <input
               type="date"
@@ -108,14 +108,14 @@ const PurchaseRequestFilter = ({
                   tanggal_selesai: e.target.value,
                 }))
               }
-              className="w-full rounded-lg border border-border bg-surface py-2.5 pl-9 pr-3 text-sm text-text outline-none transition focus:border-primary"
+              className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition"
             />
           </div>
 
           <button
             type="button"
             onClick={onReset}
-            className="flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-sm font-medium text-white transition hover:opacity-90"
+            className="flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition glass-button text-ink"
           >
             <RefreshCcw size={16} />
             Reset

@@ -30,7 +30,7 @@ import {
 } from "../purchase-requests/purchase-request.service";
 
 import { formatCurrencyInput, parseCurrencyInput } from "../../utils/currency";
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 
 /* ==========================
     Initial Form
@@ -85,7 +85,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
       return "border-primary bg-primary/5 focus:border-primary focus:ring-2 focus:ring-primary/10";
     }
 
-    return "border-border bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10";
+    return "border-primary-200 bg-white focus:border-primary focus:ring-2 focus:ring-primary/10";
   };
 
   const handleAmountChange = (e) => {
@@ -231,7 +231,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
     const error = validateAttachment(file);
 
     if (error) {
-      swal.fire({
+      notify.fire({
         icon: "warning",
         title: "File Tidak Valid",
         text: error,
@@ -302,7 +302,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
       onSuccess?.();
       handleClose();
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Transaksi berhasil diupdate.",
@@ -310,7 +310,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text:
@@ -348,19 +348,19 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex w-full max-w-3xl flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* ==========================
           Header
         ========================== */}
 
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-secondary">
+            <h2 className="text-lg font-semibold text-ink">
               Edit Transaksi
             </h2>
 
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 text-sm text-neutral-600">
               Menyesuaikan transaksi di cashbook.
             </p>
           </div>
@@ -368,7 +368,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-2 transition hover:bg-surface"
+            className="rounded-full p-2 transition glass-button"
           >
             <X size={20} />
           </button>
@@ -396,7 +396,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
                 <div className="grid gap-4 lg:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-secondary">
+                    <label className="mb-1.5 block text-sm font-medium text-primary-strong">
                       Account
                       <span className="ml-1 text-red-500">*</span>
                     </label>
@@ -427,7 +427,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-secondary">
+                    <label className="mb-1.5 block text-sm font-medium text-primary-strong">
                       Kategori
                       <span className="ml-1 text-red-500">*</span>
                     </label>
@@ -464,20 +464,20 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
                 <div className="grid gap-4 lg:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-secondary">
+                    <label className="mb-1.5 block text-sm font-medium text-primary-strong">
                       Jenis Transaksi
                       <span className="ml-1 text-red-500">*</span>
                     </label>
 
-                    <div className="grid grid-cols-2 rounded-xl border border-border bg-surface p-1">
+                    <div className="grid grid-cols-2 p-1 rounded-2xl glass-inset">
                       <button
                         type="button"
                         disabled
                         onClick={() => handleTransactionType("IN")}
                         className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                           form.transaction_type === "IN"
-                            ? "border border-primary bg-primary text-white font-semibold shadow-sm"
-                            : "text-muted"
+                            ? "border border-primary glass-primary font-semibold shadow-sm"
+                            : "text-neutral-600"
                         }`}
                       >
                         <ArrowDownLeft size={16} />
@@ -491,7 +491,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                         className={`flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                           form.transaction_type === "OUT"
                             ? "border border-rose bg-rose-400 text-white font-semibold shadow-sm"
-                            : "text-muted"
+                            : "text-neutral-600"
                         }`}
                       >
                         <ArrowUpRight size={16} />
@@ -501,7 +501,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-secondary">
+                    <label className="mb-1.5 block text-sm font-medium text-primary-strong">
                       Tanggal
                       <span className="ml-1 text-red-500">*</span>
                     </label>
@@ -535,14 +535,14 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                       ? "border-red-500 bg-red-50"
                       : form.amount
                         ? "border-primary bg-primary/5"
-                        : "border-border bg-surface"
+                        : "border-primary-200 bg-white"
                   }`}
                 >
                   <div
                     className={`flex items-center px-4 text-base font-bold sm:px-5 sm:text-lg ${
                       form.amount
-                        ? "bg-primary text-white"
-                        : "border-r border-border bg-surface text-muted"
+                        ? "glass-primary"
+                        : "border-r border-primary-200 bg-white text-neutral-600"
                     }`}
                   >
                     Rp
@@ -561,7 +561,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                 ========================== */}
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-secondary">
+                  <label className="mb-1 block text-sm font-medium text-primary-strong">
                     Deskripsi
                     <span className="ml-1 text-red-500">*</span>
                   </label>
@@ -591,7 +591,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-secondary">
+                    <label className="mb-1.5 block text-sm font-medium text-primary-strong">
                       Reference Number
                     </label>
 
@@ -607,15 +607,15 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-secondary">
+                    <label className="block text-sm font-medium text-primary-strong">
                       Bukti Transaksi
-                      <span className="ml-2 text-xs font-normal text-muted">
+                      <span className="ml-2 text-xs font-normal text-neutral-600">
                         (Opsional)
                       </span>
                     </label>
 
                     {!attachmentFile && !form.attachment_url ? (
-                      <label className="flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-surface transition hover:border-primary hover:bg-primary/5">
+                      <label className="flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-full border-dashed transition hover:border-primary hover:bg-primary/5 glass-button">
                         <input
                           hidden
                           type="file"
@@ -636,10 +636,10 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                             <img
                               src={attachmentPreview}
                               alt="Attachment"
-                              className="h-12 w-12 shrink-0 rounded-lg border border-border object-cover"
+                              className="h-12 w-12 shrink-0 rounded-lg border border-primary-200 object-cover"
                             />
                           ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-border bg-card">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center glass-inset rounded-2xl">
                               <FileText size={22} className="text-primary" />
                             </div>
                           )}
@@ -650,22 +650,22 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                               onClick={() => setPreviewOpen(true)}
                             />
 
-                            <p className="text-xs text-muted">
+                            <p className="text-xs text-neutral-600">
                               {attachmentFile ? (
-                                <p className="text-xs text-muted">
+                                <p className="text-xs text-neutral-600">
                                   {attachmentFile.size >= 1024 * 1024
                                 ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
                                 : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
                                 </p>
                               ) : (
-                                <p className="text-xs text-muted">
+                                <p className="text-xs text-neutral-600">
                                   File tersimpan
                                 </p>
                               )}
                             </p>
 
                             {uploadProgress !== null && (
-                              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-primary-200">
                                 <div
                                   className="h-full bg-primary transition-all"
                                   style={{ width: `${uploadProgress}%` }}
@@ -675,7 +675,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                           </div>
 
                           <div className="flex gap-2">
-                            <label className="cursor-pointer rounded-md border border-border bg-white px-2.5 py-1 text-xs transition hover:bg-surface">
+                            <label className="cursor-pointer rounded-full px-2.5 py-1 text-xs transition hover:bg-white glass-button">
                               Ganti
                               <input
                                 hidden
@@ -688,7 +688,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                             <button
                               type="button"
                               onClick={handleRemoveAttachment}
-                              className="rounded-md border border-red-200 bg-white px-2.5 py-1 text-xs text-red-600 transition hover:bg-red-50"
+                              className="rounded-full px-2.5 py-1 text-xs text-red-600 transition hover:bg-red-50 glass-button"
                             >
                               Hapus
                             </button>
@@ -703,8 +703,8 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                     Footer
                 ========================== */}
 
-                <div className="flex flex-col gap-4 border-t border-border bg-card px-5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-xs text-muted">
+                <div className="flex flex-col gap-4 border-t border-primary-200 px-5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-xs text-neutral-600">
                     <span className="font-semibold text-red-500">*</span> Wajib
                     diisi sebelum transaksi dapat disimpan.
                   </div>
@@ -714,7 +714,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                       type="button"
                       onClick={handleClose}
                       disabled={saving}
-                      className="flex-1 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium transition hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+                      className="flex-1 rounded-full px-4 py-2 text-sm font-medium transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none glass-button"
                     >
                       Batal
                     </button>
@@ -722,7 +722,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                     <button
                       type="submit"
                       disabled={saving}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+                      className="flex flex-1 items-center justify-center gap-2 rounded-full glass-primary px-5 py-2 text-sm font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
                     >
                       {saving ? (
                         <>

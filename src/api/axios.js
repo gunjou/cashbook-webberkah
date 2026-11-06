@@ -1,6 +1,6 @@
 // src/api/axios.js
 import axios from "axios";
-import swal from "../lib/swal";
+import notify from "../lib/notify";
 
 const baseURL = process.env.REACT_APP_API_URL;
 // const baseURL = "http://127.0.0.1:5000";
@@ -49,7 +49,7 @@ api.interceptors.response.use(
         // Hapus session
         localStorage.clear();
 
-        await swal.fire({
+        await notify.fire({
           icon: "warning",
           title: "Sesi Tidak Valid",
           text: "Sesi Anda telah berakhir. Silakan login kembali.",

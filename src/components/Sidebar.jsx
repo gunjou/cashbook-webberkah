@@ -9,7 +9,7 @@ import {
 
 import { NavLink } from "react-router-dom";
 
-import logo from "../assets/logo.png";
+import Logo from "./Logo";
 
 const menus = [
   {
@@ -49,7 +49,7 @@ const menus = [
 const Sidebar = ({ sidebarOpen }) => {
   return (
     <aside
-      className={`hidden border-r border-border bg-surface transition-all duration-300 lg:block ${
+      className={`card-glass m-3 hidden shrink-0 overflow-hidden transition-all duration-300 lg:block ${
         sidebarOpen ? "w-64" : "w-20"
       }`}
     >
@@ -57,29 +57,25 @@ const Sidebar = ({ sidebarOpen }) => {
         {/* Logo */}
 
         <div
-          className={`flex h-[68px] items-center border-b border-border ${
+          className={`flex h-[76px] items-center ${
             sidebarOpen ? "px-4 justify-start" : "justify-center"
           }`}
         >
-          <img
-            src={logo}
-            alt="Cashbook"
-            className={`${
+          <Logo title="Cashbook" className={`${
               sidebarOpen ? "h-10 w-10" : "h-9 w-9"
-            } object-contain transition-all`}
-          />
+            } object-contain transition-all`} />
 
           {sidebarOpen && (
             <div className="ml-3">
-              <h1 className="text-sm font-bold text-secondary">Cashbook</h1>
-              <p className="text-xs text-muted">Berkah Angsana</p>
+              <h1 className="text-sm font-semibold text-ink">Cashbook</h1>
+              <p className="text-xs text-neutral-600">Berkah Angsana</p>
             </div>
           )}
         </div>
 
         {/* Menu */}
 
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {menus.map((menu, index) => {
             const Icon = menu.icon;
 
@@ -88,7 +84,7 @@ const Sidebar = ({ sidebarOpen }) => {
             return (
               <div key={menu.path}>
                 {sidebarOpen && menu.group && menu.group !== previousGroup && (
-                  <p className="px-3 pt-5 pb-2 text-xs font-semibold uppercase tracking-wider text-muted">
+                  <p className="px-3 pt-5 pb-2 text-xs font-semibold uppercase tracking-wider text-neutral-600">
                     {menu.group}
                   </p>
                 )}
@@ -96,18 +92,18 @@ const Sidebar = ({ sidebarOpen }) => {
                 <NavLink
                   to={menu.path}
                   className={({ isActive }) =>
-                    `flex w-full items-center rounded-lg px-3 py-3 transition ${
+                    `flex min-h-11 w-full items-center rounded-full px-4 py-2.5 text-sm transition ${
                       sidebarOpen ? "gap-3" : "justify-center"
                     } ${
                       isActive
-                        ? "bg-primary text-white font-semibold"
-                        : "text-text hover:bg-primary/15"
+                        ? "bg-white/80 font-semibold text-primary-strong shadow-sm"
+                        : "text-ink hover:bg-white/50"
                     }`
                   }
                 >
-                  <Icon size={20} />
+                  <Icon size={20} strokeWidth={1.5} className="shrink-0" />
 
-                  {sidebarOpen && <span>{menu.title}</span>}
+                  {sidebarOpen && <span className="truncate">{menu.title}</span>}
                 </NavLink>
               </div>
             );

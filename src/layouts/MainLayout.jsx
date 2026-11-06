@@ -1,42 +1,28 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import BottomNavigation from "../components/BottomNavigation";
 
-import swal from "../lib/swal";
+import notify from "../lib/notify";
 import { getUser, logout } from "../modules/auth/auth.service";
 import FloatingActionButton from "../components/FloatingActionButton";
 import TransactionAddModal from "../modules/transactions/TransactionAddModal";
+import ThemePicker from "../components/ThemePicker";
 
 const MainLayout = ({ children }) => {
   const user = getUser();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openAddTransaction, setOpenAddTransaction] = useState(false);
-
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("dark_mode") === "true",
-  );
+  const [openTheme, setOpenTheme] = useState(false);
 
   const [hideAmount, setHideAmount] = useState(
     localStorage.getItem("hide_amount") === "true",
   );
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
-
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
-  };
-
-  const toggleDarkMode = () => {
-    const value = !darkMode;
-
-    setDarkMode(value);
-
-    localStorage.setItem("dark_mode", value);
   };
 
   const toggleHideAmount = () => {
@@ -48,7 +34,7 @@ const MainLayout = ({ children }) => {
   };
 
   const handleLogout = async () => {
-    const result = await swal.fire({
+    const result = await notify.fire({
       icon: "warning",
       title: "Logout",
       text: "Apakah Anda yakin ingin keluar dari aplikasi?",
@@ -61,7 +47,7 @@ const MainLayout = ({ children }) => {
 
     logout();
 
-    await swal.fire({
+    await notify.fire({
       icon: "success",
       title: "Logout Berhasil",
       text: "Sampai jumpa kembali.",
@@ -73,22 +59,21 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen min-w-0 overflow-hidden bg-background">
+    <div className="flex h-screen min-w-0 overflow-hidden">
       <Sidebar sidebarOpen={sidebarOpen} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar
           sidebarOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
-          darkMode={darkMode}
-          toggleDarkMode={toggleDarkMode}
           hideAmount={hideAmount}
           toggleHideAmount={toggleHideAmount}
           user={user}
           onLogout={handleLogout}
+          onOpenTheme={() => setOpenTheme(true)}
         />
 
-        <main className="min-w-0 flex-1 overflow-y-auto bg-background pb-20 lg:pb-0">
+        <main className="min-w-0 flex-1 overflow-y-auto pb-28 lg:pb-0">
           {children}
         </main>
       </div>
@@ -99,6 +84,9 @@ const MainLayout = ({ children }) => {
         open={openAddTransaction}
         onClose={() => setOpenAddTransaction(false)}
       />
+
+      {/* Di luar Navbar: backdrop-filter membuat position: fixed mengacu ke Navbar. */}
+      <ThemePicker open={openTheme} onClose={() => setOpenTheme(false)} />
 
       <BottomNavigation />
     </div>

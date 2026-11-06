@@ -11,7 +11,7 @@ import { RiFileExcel2Line } from "react-icons/ri";
 
 import MainLayout from "../../layouts/MainLayout";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import Loading from "../../components/Loading";
 
 import {
@@ -54,7 +54,7 @@ const OpeningBalancePage = () => {
 
       setOpeningBalances(data);
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -100,7 +100,7 @@ const OpeningBalancePage = () => {
       setShowAddModal(false);
       await fetchOpeningBalances();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Opening Balance berhasil ditambahkan.",
@@ -108,7 +108,7 @@ const OpeningBalancePage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -122,7 +122,7 @@ const OpeningBalancePage = () => {
       setEditingOpeningBalanceId(null);
       await fetchOpeningBalances();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Opening Balance berhasil diperbarui.",
@@ -130,7 +130,7 @@ const OpeningBalancePage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -144,7 +144,7 @@ const OpeningBalancePage = () => {
       setGenerateOpen(false);
       await fetchOpeningBalances();
 
-      swal.fire({
+      notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Opening Balance berhasil digenerate.",
@@ -152,7 +152,7 @@ const OpeningBalancePage = () => {
         showConfirmButton: false,
       });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -162,16 +162,16 @@ const OpeningBalancePage = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-4 sm:p-6">
         {/* Header */}
 
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">
+            <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">
               Opening Balance
             </h1>
 
-            <p className="mt-1 text-muted">
+            <p className="mt-1 text-neutral-600">
               Monitoring saldo awal setiap account berdasarkan periode.
             </p>
           </div>
@@ -182,7 +182,7 @@ const OpeningBalancePage = () => {
             <div ref={exportRef} className="relative">
               <button
                 onClick={() => setOpenExport((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
+                className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-ink transition hover:bg-primary-100 hover:text-ink glass-button"
               >
                 <Download size={18} />
                 Export
@@ -193,7 +193,7 @@ const OpeningBalancePage = () => {
               </button>
 
               {openExport && (
-                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card lg:left-0 lg:right-auto">
+                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden lg:left-0 lg:right-auto panel-dialog rounded-card">
                   <button
                     onClick={handleExportPDF}
                     className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-red-600 hover:bg-red-600/10 hover:text-red-600"
@@ -219,7 +219,7 @@ const OpeningBalancePage = () => {
 
             <button
               onClick={() => setGenerateOpen(true)}
-              className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition glass-button text-ink"
             >
               <WandSparkles size={18} />
               Generate
@@ -229,7 +229,7 @@ const OpeningBalancePage = () => {
 
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full glass-primary px-4 py-3 text-sm font-semibold transition hover:opacity-90"
             >
               <Plus size={18} />
               Tambah Manual
@@ -242,7 +242,7 @@ const OpeningBalancePage = () => {
         <div className="relative">
           <Search
             size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-600"
           />
 
           <input
@@ -250,26 +250,26 @@ const OpeningBalancePage = () => {
             placeholder="Cari account..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card py-3 pl-11 pr-4 text-text outline-none transition focus:border-primary"
+            className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-3 pl-11 pr-4 text-ink outline-none transition"
           />
         </div>
         {/* Content */}
 
         {loading ? (
-          <div className="rounded-2xl border border-border bg-card py-20 shadow-card">
+          <div className="py-20 panel-glass rounded-card">
             <Loading.Data text="Memuat Opening Balance..." />
           </div>
         ) : filteredOpeningBalances.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card py-20 text-center shadow-card">
+          <div className="py-20 text-center panel-glass rounded-card">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
               <Search size={34} className="text-primary" />
             </div>
 
-            <h3 className="mt-6 text-xl font-semibold text-secondary">
+            <h3 className="mt-6 text-xl font-semibold text-primary-strong">
               Tidak ada Opening Balance
             </h3>
 
-            <p className="mt-2 text-muted">
+            <p className="mt-2 text-neutral-600">
               Account yang Anda cari tidak ditemukan.
             </p>
           </div>
@@ -277,18 +277,18 @@ const OpeningBalancePage = () => {
           <>
             {/* Summary */}
 
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-5 py-4 shadow-card">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 panel-glass rounded-card">
               <div>
-                <h2 className="font-semibold text-secondary">
+                <h2 className="font-semibold text-primary-strong">
                   Opening Balance Terakhir
                 </h2>
 
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-1 text-sm text-neutral-600">
                   Menampilkan snapshot opening balance terbaru setiap account.
                 </p>
               </div>
 
-              <span className="rounded-full bg-primary/15 px-4 py-2 text-sm font-medium text-secondary">
+              <span className="rounded-full bg-primary/15 px-4 py-2 text-sm font-medium text-primary-strong">
                 {filteredOpeningBalances.length} Account
               </span>
             </div>

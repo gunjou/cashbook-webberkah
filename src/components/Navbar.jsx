@@ -6,8 +6,7 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
-  Moon,
-  Sun,
+  Palette,
   User,
   LogOut,
 } from "lucide-react";
@@ -19,12 +18,11 @@ import {
 const Navbar = ({
   sidebarOpen,
   toggleSidebar,
-  darkMode,
-  toggleDarkMode,
   hideAmount,
   toggleHideAmount,
   user,
   onLogout,
+  onOpenTheme,
 }) => {
   const [openProfile, setOpenProfile] = useState(false);
   const [hidden, setHidden] = useState(isCurrencyHidden());
@@ -47,71 +45,74 @@ const Navbar = ({
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 flex h-[68px] items-center justify-between border-b border-border bg-surface px-4 lg:px-6">
+    <header className="glass sticky top-0 z-40 mx-3 mt-3 flex h-[60px] shrink-0 items-center justify-between rounded-full px-2 sm:px-3 lg:ml-0 lg:mr-3">
       {/* Left */}
 
       <div className="flex items-center">
         <button
           onClick={toggleSidebar}
-          className="hidden rounded-lg p-2 text-text transition hover:bg-primary-hover hover:text-white lg:flex"
+          aria-label={sidebarOpen ? "Tutup sidebar" : "Buka sidebar"}
+          className="hidden size-11 items-center justify-center rounded-full text-ink transition hover:bg-white/60 active:scale-95 lg:flex"
         >
           {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
 
-        <h1 className="text-lg font-bold text-secondary lg:hidden">
+        <h1 className="truncate pl-3 text-base font-semibold tracking-tight text-ink sm:text-lg lg:hidden">
           Cashbook Berkah
         </h1>
       </div>
 
       {/* Right */}
 
-      <div className="flex items-center gap-2 lg:gap-3">
+      <div className="flex shrink-0 items-center gap-1 lg:gap-2">
         <button
           onClick={handleToggleCurrency}
-          className="rounded-lg p-2 text-text transition hover:bg-primary-hover hover:text-white"
+          className="flex size-11 items-center justify-center rounded-full text-ink transition hover:bg-white/60 active:scale-95"
           title={hideAmount ? "Tampilkan Saldo" : "Sembunyikan Saldo"}
+          aria-label={hideAmount ? "Tampilkan Saldo" : "Sembunyikan Saldo"}
         >
           {hidden ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
 
         <button
-          onClick={toggleDarkMode}
-          className="rounded-lg p-2 text-text transition hover:bg-primary-hover hover:text-white"
-          title={darkMode ? "Light Mode" : "Dark Mode"}
+          onClick={onOpenTheme}
+          className="flex size-11 items-center justify-center rounded-full text-ink transition hover:bg-white/60 active:scale-95"
+          title="Warna Tema"
+          aria-label="Warna Tema"
         >
-          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+          <Palette size={20} strokeWidth={1.5} />
         </button>
 
         <div ref={dropdownRef} className="relative">
           <button
             onClick={() => setOpenProfile((prev) => !prev)}
-            className="flex items-center gap-2 rounded-lg p-1 transition hover:bg-primary-hover hover:text-white lg:px-3 lg:py-2"
+            className="flex items-center gap-2 rounded-full p-1 transition hover:bg-white/60 lg:pr-3"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary font-semibold text-white">
+            <div className="glass-primary flex size-9 items-center justify-center rounded-full font-semibold">
               {user?.display_name?.charAt(0)?.toUpperCase() || "U"}
             </div>
 
             <div className="hidden text-left lg:block">
-              <p className="text-sm font-semibold text-text">
+              <p className="text-sm font-semibold text-ink">
                 {user?.display_name || "Administrator"}
               </p>
 
-              <p className="text-xs text-muted">{user?.role || "-"}</p>
+              <p className="text-xs text-neutral-600">{user?.role || "-"}</p>
             </div>
 
-            <ChevronDown size={20} className="hidden text-muted lg:block" />
+            <ChevronDown size={20} className="hidden text-neutral-600 lg:block" />
           </button>
 
           {openProfile && (
-            <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card shadow-card">
-              <button className="flex w-full items-center gap-3 px-4 py-3 text-sm text-text transition hover:bg-primary-hover hover:text-white">
+            <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl p-1 panel-dialog">
+              <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-ink transition hover:bg-primary-100">
                 <User size={20} />
                 Profile
               </button>
 
               <button
                 onClick={onLogout}
-                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10"
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10"
               >
                 <LogOut size={20} />
                 Logout

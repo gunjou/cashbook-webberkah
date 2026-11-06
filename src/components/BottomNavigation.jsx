@@ -44,31 +44,22 @@ const menus = [
 
 const BottomNavigation = () => {
   return (
-    // <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface lg:hidden">
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-surface lg:hidden">
-      <div className="grid grid-cols-6">
+    <nav className="glass fixed bottom-4 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-full p-1.5 lg:hidden">
+      <div className="grid grid-cols-6 gap-0.5">
         {menus.map((menu) => {
           const Icon = menu.icon;
 
           return (
-            <NavLink key={menu.path} to={menu.path}>
+            <NavLink key={menu.path} to={menu.path} aria-label={menu.title}>
               {({ isActive }) => (
                 <div
-                  className={`flex flex-col items-center justify-center gap-1 py-3 transition ${
+                  className={`flex h-11 items-center justify-center rounded-full transition ${
                     isActive
-                      ? "text-white bg-background rounded-b-lg"
-                      : "text-muted hover:text-secondary"
+                      ? "bg-white/80 text-primary-strong shadow-sm"
+                      : "text-neutral-600 hover:text-ink"
                   }`}
                 >
-                  <Icon size={24} strokeWidth={isActive ? 2.6 : 2} />
-
-                  <span
-                    className={`text-[11px] font-medium ${
-                      isActive ? "text-secondary" : ""
-                    }`}
-                  >
-                    {/* {menu.title} */}
-                  </span>
+                  <Icon size={20} strokeWidth={isActive ? 2 : 1.5} aria-hidden="true" />
                 </div>
               )}
             </NavLink>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { X } from "lucide-react";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import Loading from "../../components/Loading";
 
 const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
@@ -28,7 +28,7 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
     if (loading) return;
 
     if (!effectiveDate) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Tanggal efektif wajib diisi.",
@@ -52,28 +52,28 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-secondary">
+            <h2 className="text-lg font-semibold text-ink">
               Generate Opening Balance
             </h2>
 
-            <p className="text-sm text-muted">
+            <p className="text-sm text-neutral-600">
               Generate opening balance berdasarkan saldo transaksi.
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-secondary transition hover:bg-primary hover:text-white"
+            className="rounded-full p-2 text-primary-strong transition hover:text-ink glass-button"
           >
             <X size={20} />
           </button>
@@ -97,7 +97,7 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
             {/* Effective Date */}
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-text">
+              <label className="mb-2 block text-sm font-medium text-ink">
                 Tanggal Efektif
               </label>
 
@@ -105,14 +105,14 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
                 type="date"
                 value={effectiveDate}
                 onChange={(e) => setEffectiveDate(e.target.value)}
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
               />
             </div>
 
             {/* Notes */}
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-text">
+              <label className="mb-2 block text-sm font-medium text-ink">
                 Catatan
               </label>
 
@@ -121,19 +121,19 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Masukkan catatan checkpoint (opsional)"
-                className="w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full resize-none px-4 py-3 text-ink outline-none transition"
               />
             </div>
           </div>
 
           {/* Footer */}
 
-          <div className="flex justify-end gap-3 border-t border-border px-5 py-4">
+          <div className="flex justify-end gap-3 border-t border-primary-200 px-5 py-4">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-lg border border-border bg-surface px-5 py-2 font-medium text-text transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full px-5 py-2 font-medium text-ink transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70 glass-button"
             >
               Batal
             </button>
@@ -141,7 +141,7 @@ const OpeningBalanceGenerateModal = ({ open, onClose, onSave }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex min-w-[170px] items-center justify-center rounded-lg bg-secondary px-5 py-2 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex min-w-[170px] items-center justify-center rounded-full px-5 py-2 font-semibold transition disabled:cursor-not-allowed disabled:opacity-70 glass-button text-ink"
             >
               {loading ? <Loading.Button text="Generating..." /> : "Generate"}
             </button>

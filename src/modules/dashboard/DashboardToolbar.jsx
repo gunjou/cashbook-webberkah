@@ -34,13 +34,13 @@ const DashboardToolbar = ({
       <div className="relative">
         <CalendarDays
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
         />
 
         <select
           value={period}
           onChange={(e) => onPeriodChange?.(e.target.value)}
-          className="min-w-[180px] appearance-none rounded-xl border border-border bg-card py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+          className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 min-w-[180px] appearance-none py-2.5 pl-10 pr-8 text-sm outline-none transition"
         >
           {periods.map((item) => (
             <option key={item.value} value={item.value}>
@@ -55,13 +55,13 @@ const DashboardToolbar = ({
       <div className="relative">
         <Landmark
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
         />
 
         <select
           value={account}
           onChange={(e) => onAccountChange?.(e.target.value)}
-          className="min-w-[220px] appearance-none rounded-xl border border-border bg-card py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+          className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 min-w-[220px] appearance-none py-2.5 pl-10 pr-8 text-sm outline-none transition"
         >
           <option value="">Semua Account</option>
 
@@ -77,7 +77,7 @@ const DashboardToolbar = ({
 
       <button
         onClick={onRefresh}
-        className="flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-border bg-card transition hover:bg-primary hover:text-white"
+        className="flex h-[42px] w-[42px] items-center justify-center rounded-full transition hover:bg-primary-100 hover:text-ink glass-button"
       >
         <RefreshCw size={18} />
       </button>

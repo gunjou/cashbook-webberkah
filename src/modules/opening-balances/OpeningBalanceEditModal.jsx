@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import Loading from "../../components/Loading";
 
 import { formatCurrencyInput } from "../../utils/currency";
@@ -40,7 +40,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
       setNotes(detail.notes ?? "");
     } catch (error) {
       onClose();
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -61,7 +61,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
     if (loading) return;
 
     if (!idAccount) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Account wajib dipilih.",
@@ -69,7 +69,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
     }
 
     if (!effectiveDate) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Tanggal efektif wajib diisi.",
@@ -77,7 +77,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
     }
 
     if (!openingBalance) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Opening Balance wajib diisi.",
@@ -102,26 +102,26 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-secondary">
+            <h2 className="text-lg font-semibold text-ink">
               Edit Opening Balance
             </h2>
 
-            <p className="text-sm text-muted">Perbarui data opening balance.</p>
+            <p className="text-sm text-neutral-600">Perbarui data opening balance.</p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 transition text-secondary hover:bg-primary hover:text-white"
+            className="rounded-full p-2 transition text-primary-strong hover:text-ink glass-button"
           >
             <X size={20} />
           </button>
@@ -143,7 +143,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                 {/* Account */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Account
                   </label>
 
@@ -152,7 +152,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                       value={idAccount}
                       onChange={(e) => setIdAccount(e.target.value)}
                       disabled={loadingAccount}
-                      className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary disabled:opacity-60"
+                      className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition disabled:opacity-60"
                     >
                       <option value="">Pilih Account</option>
 
@@ -171,7 +171,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                 {/* Effective Date */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Tanggal Efektif
                   </label>
 
@@ -179,18 +179,18 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                     type="date"
                     value={effectiveDate}
                     onChange={(e) => setEffectiveDate(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                   />
                 </div>
                 {/* Opening Balance */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Opening Balance
                   </label>
 
-                  <div className="flex overflow-hidden rounded-lg border border-border bg-surface transition focus-within:border-primary">
-                    <div className="flex items-center border-r border-border bg-card px-4 font-medium text-muted">
+                  <div className="flex overflow-hidden rounded-full transition focus-within:border-primary glass-button">
+                    <div className="flex items-center border-r border-primary-200 bg-primary-50 px-4 font-medium text-neutral-600">
                       Rp
                     </div>
 
@@ -199,11 +199,11 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                       value={openingBalance}
                       onChange={handleBalanceChange}
                       placeholder="0"
-                      className="flex-1 bg-transparent px-4 py-3 text-text outline-none"
+                      className="flex-1 bg-transparent px-4 py-3 text-ink outline-none"
                     />
                   </div>
 
-                  <p className="mt-2 text-xs text-muted">
+                  <p className="mt-2 text-xs text-neutral-600">
                     Nilai akan dikirim sebagai angka ke server.
                   </p>
                 </div>
@@ -211,7 +211,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                 {/* Notes */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Catatan
                   </label>
 
@@ -220,7 +220,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Masukkan catatan (opsional)"
-                    className="w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full resize-none px-4 py-3 text-ink outline-none transition"
                   />
                 </div>
               </>
@@ -229,12 +229,12 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
 
           {/* Footer */}
 
-          <div className="flex justify-end gap-3 border-t border-border px-5 py-4">
+          <div className="flex justify-end gap-3 border-t border-primary-200 px-5 py-4">
             <button
               type="button"
               onClick={onClose}
               disabled={loading || fetching}
-              className="rounded-lg border border-border bg-surface px-5 py-2 font-medium text-text transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full px-5 py-2 font-medium text-ink transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70 glass-button"
             >
               Batal
             </button>
@@ -242,7 +242,7 @@ const OpeningBalanceEditModal = ({ openingBalanceId, onClose, onSave }) => {
             <button
               type="submit"
               disabled={loading || fetching}
-              className="flex min-w-[170px] items-center justify-center rounded-lg bg-primary px-5 py-2 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex min-w-[170px] items-center justify-center rounded-full glass-primary px-5 py-2 font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? (
                 <Loading.Button text="Menyimpan..." />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import Loading from "../../components/Loading";
 
 import {
@@ -68,7 +68,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
       setAccounts(accountData ?? []);
       setCategories(categoryData ?? []);
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text:
@@ -145,7 +145,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
   // ==========================
 
   const showValidationError = (text) => {
-    swal.fire({
+    notify.fire({
       icon: "warning",
       title: "Data Belum Lengkap",
       text,
@@ -168,7 +168,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
     }
 
     if (form.id_from_account === form.id_to_account) {
-      swal.fire({
+      notify.fire({
         icon: "warning",
         title: "Account Tidak Valid",
         text: "Account asal dan account tujuan tidak boleh sama.",
@@ -188,7 +188,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
     }
 
     if (parseCurrencyInput(form.amount) <= 0) {
-      swal.fire({
+      notify.fire({
         icon: "warning",
         title: "Nominal Tidak Valid",
         text: "Nominal transfer harus lebih dari 0.",
@@ -222,7 +222,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
       }
 
       if (parseCurrencyInput(fee.amount) <= 0) {
-        swal.fire({
+        notify.fire({
           icon: "warning",
           title: "Nominal Tidak Valid",
           text: `Nominal pada Biaya #${i + 1} harus lebih dari 0.`,
@@ -270,7 +270,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
         })),
       });
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Transfer berhasil dilakukan.",
@@ -282,7 +282,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
       resetForm();
       onClose?.();
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Transfer Gagal",
         text:
@@ -311,23 +311,23 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* ==========================
             Header
         ========================== */}
 
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-secondary">
+            <h2 className="text-lg font-semibold text-ink">
               Transfer Antar Account
             </h2>
 
-            <p className="text-sm text-muted">
+            <p className="text-sm text-neutral-600">
               Transfer saldo antar account beserta biaya tambahan.
             </p>
           </div>
@@ -336,7 +336,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
             type="button"
             onClick={handleClose}
             disabled={loading}
-            className="rounded-full p-2 text-secondary transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full p-2 text-primary-strong transition hover:text-ink disabled:cursor-not-allowed disabled:opacity-50 glass-button"
           >
             <X size={20} />
           </button>
@@ -358,7 +358,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Account Asal */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Account Asal
                   </label>
 
@@ -367,7 +367,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     onChange={(e) =>
                       updateForm("id_from_account", e.target.value)
                     }
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                   >
                     <option value="">Pilih Account</option>
 
@@ -385,7 +385,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Account Tujuan */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Account Tujuan
                   </label>
 
@@ -394,7 +394,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     onChange={(e) =>
                       updateForm("id_to_account", e.target.value)
                     }
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                   >
                     <option value="">Pilih Account</option>
 
@@ -412,7 +412,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Transfer Type */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Jenis Transfer
                   </label>
 
@@ -421,7 +421,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     onChange={(e) =>
                       updateForm("transfer_type", e.target.value)
                     }
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                   >
                     <option value="TRANSFER">Transfer</option>
                     <option value="CASH_WITHDRAWAL">Tarik Tunai</option>
@@ -432,7 +432,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Date */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Tanggal Transfer
                   </label>
 
@@ -442,19 +442,19 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     onChange={(e) =>
                       updateForm("transaction_date", e.target.value)
                     }
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                   />
                 </div>
 
                 {/* Amount */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Nominal Transfer
                   </label>
 
-                  <div className="flex overflow-hidden rounded-lg border border-border bg-surface transition focus-within:border-primary">
-                    <div className="flex items-center border-r border-border bg-card px-4 font-medium text-muted">
+                  <div className="flex overflow-hidden rounded-full transition focus-within:border-primary glass-button">
+                    <div className="flex items-center border-r border-primary-200 bg-primary-50 px-4 font-medium text-neutral-600">
                       Rp
                     </div>
 
@@ -471,7 +471,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Reference */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Nomor Referensi
                   </label>
 
@@ -482,14 +482,14 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                       updateForm("reference_number", e.target.value)
                     }
                     placeholder="Masukkan nomor referensi"
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                   />
                 </div>
 
                 {/* Description */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Deskripsi
                   </label>
 
@@ -498,26 +498,26 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     value={form.description}
                     onChange={(e) => updateForm("description", e.target.value)}
                     placeholder="Masukkan deskripsi transfer"
-                    className="w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full resize-none px-4 py-3 outline-none transition"
                   />
                 </div>
 
                 {/* Fee Header */}
 
-                <div className="flex items-center justify-between border-t border-border pt-4">
+                <div className="flex items-center justify-between border-t border-primary-200 pt-4">
                   <div>
-                    <h3 className="font-semibold text-secondary">
+                    <h3 className="font-semibold text-primary-strong">
                       Biaya Tambahan
                     </h3>
 
-                    <p className="text-sm text-muted">Opsional</p>
+                    <p className="text-sm text-neutral-600">Opsional</p>
                   </div>
 
                   <button
                     type="button"
                     onClick={addFee}
                     disabled={loading}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm transition hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-full px-3 py-2 text-sm transition hover:bg-primary-100 hover:text-ink disabled:cursor-not-allowed disabled:opacity-50 glass-button"
                   >
                     <Plus size={16} />
                     Tambah
@@ -527,7 +527,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                 {/* Fee List */}
 
                 {fees.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-border bg-surface px-4 py-8 text-center text-sm text-muted">
+                  <div className="border-dashed px-4 py-8 text-center text-sm text-neutral-600 glass-inset rounded-2xl">
                     Belum ada biaya tambahan.
                   </div>
                 ) : (
@@ -535,12 +535,12 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                     {fees.map((fee, index) => (
                       <div
                         key={index}
-                        className="rounded-xl border border-border bg-surface p-4"
+                        className="p-4 rounded-2xl glass-inset"
                       >
                         {/* Fee Header */}
 
                         <div className="mb-4 flex items-center justify-between">
-                          <h4 className="font-medium text-secondary">
+                          <h4 className="font-medium text-primary-strong">
                             Biaya #{index + 1}
                           </h4>
 
@@ -548,7 +548,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                             type="button"
                             onClick={() => removeFee(index)}
                             disabled={loading}
-                            className="rounded-lg p-2 text-red-500 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="rounded-full p-2 text-red-500 transition disabled:cursor-not-allowed disabled:opacity-50 glass-button"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -557,7 +557,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                         {/* Category */}
 
                         <div className="mb-4">
-                          <label className="mb-2 block text-sm font-medium text-text">
+                          <label className="mb-2 block text-sm font-medium text-ink">
                             Kategori
                           </label>
 
@@ -566,7 +566,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                             onChange={(e) =>
                               updateFee(index, "id_category", e.target.value)
                             }
-                            className="w-full rounded-lg border border-border bg-card px-4 py-3 outline-none transition focus:border-primary"
+                            className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 outline-none transition"
                           >
                             <option value="">Pilih Kategori</option>
 
@@ -584,12 +584,12 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                         {/* Amount */}
 
                         <div className="mb-4">
-                          <label className="mb-2 block text-sm font-medium text-text">
+                          <label className="mb-2 block text-sm font-medium text-ink">
                             Nominal
                           </label>
 
-                          <div className="flex overflow-hidden rounded-lg border border-border bg-card transition focus-within:border-primary">
-                            <div className="flex items-center border-r border-border px-4 font-medium text-muted">
+                          <div className="flex overflow-hidden rounded-full transition focus-within:border-primary glass-button">
+                            <div className="flex items-center border-r border-primary-200 px-4 font-medium text-neutral-600">
                               Rp
                             </div>
 
@@ -608,7 +608,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                         {/* Description */}
 
                         <div>
-                          <label className="mb-2 block text-sm font-medium text-text">
+                          <label className="mb-2 block text-sm font-medium text-ink">
                             Deskripsi
                           </label>
 
@@ -619,7 +619,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
                               updateFee(index, "description", e.target.value)
                             }
                             placeholder="Contoh: Biaya admin transfer"
-                            className="w-full resize-none rounded-lg border border-border bg-card px-4 py-3 outline-none transition focus:border-primary"
+                            className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full resize-none px-4 py-3 outline-none transition"
                           />
                         </div>
                       </div>
@@ -634,12 +634,12 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
               Footer
           ========================== */}
 
-          <div className="flex justify-end gap-3 border-t border-border px-5 py-4">
+          <div className="flex justify-end gap-3 border-t border-primary-200 px-5 py-4">
             <button
               type="button"
               onClick={handleClose}
               disabled={loading}
-              className="rounded-lg border border-border bg-surface px-5 py-2 font-medium text-text transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full px-5 py-2 font-medium text-ink transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70 glass-button"
             >
               Batal
             </button>
@@ -647,7 +647,7 @@ const TransactionTransferModal = ({ open, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading || loadingDropdown}
-              className="flex min-w-[170px] items-center justify-center rounded-lg bg-primary px-5 py-2 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex min-w-[170px] items-center justify-center rounded-full glass-primary px-5 py-2 font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? <Loading.Button text="Memproses..." /> : "Transfer"}
             </button>

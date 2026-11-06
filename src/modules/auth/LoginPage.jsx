@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import logo from "../../assets/logo.png";
+import Logo from "../../components/Logo";
 
+import Button from "../../components/Button";
+import Card from "../../components/Card";
+import IconButton from "../../components/IconButton";
 import Loading from "../../components/Loading";
-import swal from "../../lib/swal";
+import ThemePicker from "../../components/ThemePicker";
+import notify from "../../lib/notify";
+
+import { INPUT_CLASS } from "../../utils/classes";
 
 import { login } from "./auth.service";
 
@@ -16,6 +22,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [openTheme, setOpenTheme] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +30,7 @@ const LoginPage = () => {
     if (loading) return;
 
     if (!username || !password) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Username dan password wajib diisi.",
@@ -35,7 +42,7 @@ const LoginPage = () => {
     try {
       await login(username, password);
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Login Berhasil",
         text: "Selamat datang kembali.",
@@ -45,7 +52,7 @@ const LoginPage = () => {
 
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Login Gagal",
         text: error.response?.data?.message ?? "Username atau password salah.",
@@ -56,27 +63,31 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-secondary-hover via-muted to-text px-6 py-10">
-      <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-card">
-        <div className="mb-8 flex flex-col items-center">
-          <img
-            src={logo}
-            alt="Cashbook WebBerkah"
-            className="mb-4 h-24 w-24 object-contain"
-          />
+    <div className="flex min-h-dvh items-center justify-center px-4 py-10 sm:px-6">
+      <IconButton
+        label="Warna Tema"
+        onClick={() => setOpenTheme(true)}
+        className="fixed right-4 top-4 z-10 sm:right-6 sm:top-6"
+      >
+        <Palette size={20} strokeWidth={1.5} aria-hidden="true" />
+      </IconButton>
 
-          <h1 className="text-2xl font-bold text-secondary">
+      <Card className="w-full max-w-md p-6 sm:p-8">
+        <div className="mb-8 flex flex-col items-center">
+          <Logo title="Cashbook WebBerkah" className="mb-4 h-24 w-24 object-contain" />
+
+          <h1 className="text-center text-2xl font-semibold tracking-tight text-ink">
             Cashbook WebBerkah
           </h1>
 
-          <p className="mt-2 text-center text-sm text-muted">
+          <p className="mt-2 text-center text-sm text-neutral-600">
             Sistem Pencatatan Keuangan Internal
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-medium text-text">
+            <label className="mb-2 block text-sm font-medium text-ink">
               Username
             </label>
 
@@ -86,12 +97,12 @@ const LoginPage = () => {
               disabled={loading}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Masukkan username"
-              className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
+              className={INPUT_CLASS}
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-text">
+            <label className="mb-2 block text-sm font-medium text-ink">
               Password
             </label>
 
@@ -102,33 +113,31 @@ const LoginPage = () => {
                 disabled={loading}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full rounded-lg border border-border bg-surface px-4 py-3 pr-12 text-text placeholder:text-muted outline-none transition focus:border-primary focus:ring-2 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-70"
+                className={`${INPUT_CLASS} pr-12`}
               />
 
               <button
                 type="button"
                 disabled={loading}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted transition hover:bg-primary/15 hover:text-secondary disabled:pointer-events-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-600 transition hover:bg-white/60 hover:text-ink disabled:pointer-events-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full items-center justify-center rounded-lg bg-primary py-3 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
-          >
+          <Button type="submit" size="lg" disabled={loading} className="w-full">
             {loading ? <Loading.Button text="Memproses..." /> : "Masuk"}
-          </button>
+          </Button>
 
-          <div className="mt-8 text-center text-xs text-muted">
+          <div className="mt-8 text-center text-xs text-neutral-600">
             © {new Date().getFullYear()} Outlook-Project. All rights reserved.
           </div>
         </form>
-      </div>
+      </Card>
+
+      <ThemePicker open={openTheme} onClose={() => setOpenTheme(false)} />
     </div>
   );
 };

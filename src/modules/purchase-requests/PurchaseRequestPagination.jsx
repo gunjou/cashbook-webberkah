@@ -22,7 +22,7 @@ const PurchaseRequestPagination = ({
   );
 
   return (
-    <div className="rounded-xl border border-border bg-card px-4 py-3 shadow-card">
+    <div className="px-4 py-3 panel-glass rounded-card">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Information */}
         <div className="flex min-w-0 items-center gap-3">
@@ -31,11 +31,11 @@ const PurchaseRequestPagination = ({
           </div>
 
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
               Riwayat Pengajuan
             </p>
 
-            <p className="mt-0.5 text-xs text-secondary">
+            <p className="mt-0.5 text-xs text-primary-strong">
               Menampilkan{" "}
               <span className="font-semibold">
                 {startItem}–{endItem}
@@ -48,7 +48,7 @@ const PurchaseRequestPagination = ({
         {/* Controls */}
         <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
           <div className="flex items-center gap-2">
-            <span className="whitespace-nowrap text-[10px] font-medium text-muted">
+            <span className="whitespace-nowrap text-[11px] font-medium text-neutral-600">
               Tampilkan
             </span>
 
@@ -56,7 +56,7 @@ const PurchaseRequestPagination = ({
               value={perPage}
               onChange={(e) => onPerPageChange(e.target.value)}
               disabled={loading}
-              className="h-8 rounded-lg border border-border bg-surface px-2 text-[10px] font-semibold text-secondary outline-none transition focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 h-8 px-2 text-[11px] font-semibold text-primary-strong outline-none transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               {[25, 50, 100].map((option) => (
                 <option key={option} value={option}>
@@ -72,7 +72,7 @@ const PurchaseRequestPagination = ({
                 type="button"
                 disabled={page <= 1 || loading}
                 onClick={() => onPageChange(page - 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface text-secondary transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary-strong transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-30 glass-button"
                 aria-label="Halaman sebelumnya"
               >
                 <ChevronLeft size={15} />
@@ -84,7 +84,7 @@ const PurchaseRequestPagination = ({
                 return (
                   <div key={pageNumber} className="flex items-center gap-1">
                     {previousPage && pageNumber - previousPage > 1 && (
-                      <span className="px-1 text-[10px] font-semibold text-muted">
+                      <span className="px-1 text-[11px] font-semibold text-neutral-600">
                         ...
                       </span>
                     )}
@@ -93,10 +93,10 @@ const PurchaseRequestPagination = ({
                       type="button"
                       disabled={loading}
                       onClick={() => onPageChange(pageNumber)}
-                      className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-[10px] font-semibold transition ${
+                      className={`flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-[11px] font-semibold transition ${
                         page === pageNumber
-                          ? "bg-primary text-white shadow-sm"
-                          : "border border-border bg-surface text-secondary hover:bg-primary/10 hover:text-primary"
+                          ? "glass-primary shadow-sm"
+                          : "border border-primary-200 bg-white text-primary-strong hover:bg-primary/10 hover:text-primary"
                       } disabled:cursor-not-allowed disabled:opacity-50`}
                       aria-label={`Halaman ${pageNumber}`}
                       aria-current={page === pageNumber ? "page" : undefined}
@@ -111,7 +111,7 @@ const PurchaseRequestPagination = ({
                 type="button"
                 disabled={page >= totalPages || loading}
                 onClick={() => onPageChange(page + 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-white transition hover:bg-secondary-hover disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-8 w-8 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-30 glass-primary"
                 aria-label="Halaman berikutnya"
               >
                 <ChevronRight size={15} />

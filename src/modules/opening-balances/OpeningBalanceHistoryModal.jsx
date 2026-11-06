@@ -3,7 +3,7 @@ import { ChevronDown, Download, X } from "lucide-react";
 import { FaRegFilePdf } from "react-icons/fa";
 import { RiFileExcel2Line } from "react-icons/ri";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import Loading from "../../components/Loading";
 
 import { getOpeningBalanceHistory } from "./opening-balance.service";
@@ -45,7 +45,7 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
       }
     } catch (error) {
       onClose();
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -77,28 +77,28 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
   return (
     <div
       onClick={handleClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-border px-6 py-5">
+        <div className="flex items-center justify-between border-b border-primary-200 px-6 py-5">
           <div>
-            <h2 className="text-xl font-bold text-secondary">
+            <h2 className="text-xl font-bold text-primary-strong">
               History Opening Balance
             </h2>
 
-            <p className="mt-1 text-md font-semibold text-muted">
+            <p className="mt-1 text-md font-semibold text-neutral-600">
               {accountName || "-"}
             </p>
           </div>
 
           <button
             onClick={handleClose}
-            className="rounded-full p-2 transition text-secondary hover:bg-primary hover:text-white"
+            className="rounded-full p-2 transition text-primary-strong hover:text-ink glass-button"
           >
             <X size={20} />
           </button>
@@ -106,13 +106,13 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
 
         {/* Toolbar */}
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-200 px-6 py-4">
           {/* Export */}
 
           <div ref={exportRef} className="relative">
             <button
               onClick={() => setOpenExport((prev) => !prev)}
-              className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
+              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-ink transition hover:bg-primary-100 hover:text-ink glass-button"
             >
               <Download size={18} />
               Export
@@ -123,7 +123,7 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
             </button>
 
             {openExport && (
-              <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card lg:left-0 lg:right-auto">
+              <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden lg:left-0 lg:right-auto panel-dialog rounded-card">
                 <button
                   onClick={handleExportPDF}
                   className="flex w-full items-center gap-3 px-4 py-3 text-sm transition text-red-600 hover:bg-red-500/10 hover:text-red-600"
@@ -151,21 +151,21 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
           {loading ? (
             <Loading.Data text="Memuat history opening balance..." />
           ) : history.length === 0 ? (
-            <div className="flex h-full min-h-[300px] items-center justify-center rounded-xl border border-border bg-surface">
+            <div className="flex h-full min-h-[300px] items-center justify-center rounded-2xl glass-inset">
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-secondary">
+                <h3 className="text-lg font-semibold text-ink">
                   Belum Ada History
                 </h3>
 
-                <p className="mt-2 text-sm text-muted">
+                <p className="mt-2 text-sm text-neutral-600">
                   Opening balance untuk account ini belum tersedia.
                 </p>
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-border">
+            <div className="overflow-x-auto rounded-xl border border-primary-200">
               <table className="min-w-full border-collapse">
-                <thead className="bg-secondary text-white">
+                <thead className="bg-primary-100 text-ink">
                   <tr>
                     <th className="w-16 px-4 py-3 text-center text-sm font-semibold">
                       No
@@ -193,7 +193,7 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
                   {history.map((item, index) => (
                     <tr
                       key={item.id_opening_balance}
-                      className="border-t border-border transition hover:bg-primary/10"
+                      className="border-t border-primary-200 transition hover:bg-primary/10"
                     >
                       <td className="text-center text-sm px-4 py-3">
                         {index + 1}
@@ -203,7 +203,7 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
                         {formatPeriod(item.effective_date)}
                       </td>
 
-                      <td className="whitespace-nowrap px-4 py-3 text-right font-semibold text-secondary">
+                      <td className="whitespace-nowrap px-4 py-3 text-right font-semibold text-primary-strong">
                         {formatCurrency(item.opening_balance)}
                       </td>
 
@@ -227,10 +227,10 @@ const OpeningBalanceHistoryModal = ({ accountId, onClose }) => {
 
         {/* Footer */}
 
-        <div className="flex justify-end border-t border-border px-6 py-5">
+        <div className="flex justify-end border-t border-primary-200 px-6 py-5">
           <button
             onClick={handleClose}
-            className="rounded-lg bg-primary px-5 py-2 font-semibold text-white transition hover:opacity-90"
+            className="rounded-full glass-primary px-5 py-2 font-semibold transition hover:opacity-90"
           >
             Tutup
           </button>

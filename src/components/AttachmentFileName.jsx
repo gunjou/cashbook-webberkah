@@ -4,7 +4,7 @@ const AttachmentFileName = ({ name = "", onClick }) => {
   const extension = name.match(/\.[^./\\]+$/)?.[0] || "";
   const baseName = extension ? name.slice(0, -extension.length) : name;
   const textClass =
-    "text-sm font-semibold text-secondary group-hover:underline";
+    "text-sm font-semibold text-primary-strong group-hover:underline";
 
   return (
     <button

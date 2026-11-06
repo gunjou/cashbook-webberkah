@@ -186,9 +186,9 @@ const DashboardPage = () => {
 
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">Dashboard</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">Dashboard</h1>
 
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 text-sm text-neutral-600">
               Monitor kondisi keuangan perusahaan secara real-time.
             </p>
           </div>
@@ -216,12 +216,12 @@ const DashboardPage = () => {
         <div className="grid gap-5 xl:grid-cols-3">
           {/* Cashflow */}
 
-          <div className="xl:col-span-2 rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="xl:col-span-2 p-5 panel-glass rounded-card">
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h2 className="font-semibold text-secondary">Cashflow Trend</h2>
+                <h2 className="font-semibold text-primary-strong">Cashflow Trend</h2>
 
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-1 text-sm text-neutral-600">
                   Grafik pemasukan dan pengeluaran.
                 </p>
               </div>
@@ -230,13 +230,13 @@ const DashboardPage = () => {
                 <div className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-full bg-[#8EC86A]" />
 
-                  <span className="text-muted">Income</span>
+                  <span className="text-neutral-600">Income</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="h-3 w-3 rounded-full bg-[#F83A83]" />
 
-                  <span className="text-muted">Expense</span>
+                  <span className="text-neutral-600">Expense</span>
                 </div>
               </div>
             </div>
@@ -250,14 +250,14 @@ const DashboardPage = () => {
 
           {/* Recent Transaction */}
 
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="p-5 panel-glass rounded-card">
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h2 className="font-semibold text-secondary">
+                <h2 className="font-semibold text-primary-strong">
                   Recent Transaction
                 </h2>
 
-                <p className="mt-1 text-sm text-muted">Aktivitas terbaru</p>
+                <p className="mt-1 text-sm text-neutral-600">Aktivitas terbaru</p>
               </div>
 
               <Link
@@ -282,13 +282,13 @@ const DashboardPage = () => {
         <div className="grid gap-5 xl:grid-cols-3">
           {/* Expense */}
 
-          <div className="xl:col-span-2 rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="xl:col-span-2 p-5 panel-glass rounded-card">
             <div className="mb-4">
-              <h2 className="font-semibold text-secondary">
+              <h2 className="font-semibold text-primary-strong">
                 Expense by Category
               </h2>
 
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 text-sm text-neutral-600">
                 Distribusi pengeluaran berdasarkan kategori.
               </p>
             </div>
@@ -301,13 +301,13 @@ const DashboardPage = () => {
 
           {/* Expense by Account */}
 
-          <div className="rounded-xl border border-border bg-card p-5 shadow-card">
+          <div className="p-5 panel-glass rounded-card">
             <div className="mb-4">
-              <h2 className="font-semibold text-secondary">
+              <h2 className="font-semibold text-primary-strong">
                 Expense by Account
               </h2>
 
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 text-sm text-neutral-600">
                 Distribusi pengeluaran berdasarkan account.
               </p>
             </div>

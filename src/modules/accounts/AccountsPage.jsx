@@ -17,7 +17,7 @@ import {
   updateAccount,
   deleteAccount,
 } from "./account.service";
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import AccountDetailModal from "./AccountDetailModal";
 import AccountAddModal from "./AccountAddModal";
 import AccountEditModal from "./AccountEditModal";
@@ -57,7 +57,7 @@ const AccountsPage = () => {
       setAccounts(data);
       setFilteredAccounts(data);
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -98,7 +98,7 @@ const AccountsPage = () => {
     try {
       await createAccount(payload);
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Account berhasil ditambahkan.",
@@ -110,7 +110,7 @@ const AccountsPage = () => {
 
       fetchAccounts();
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -122,7 +122,7 @@ const AccountsPage = () => {
     try {
       await updateAccount(id, payload);
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Account berhasil diperbarui.",
@@ -134,7 +134,7 @@ const AccountsPage = () => {
 
       fetchAccounts();
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -143,7 +143,7 @@ const AccountsPage = () => {
   };
 
   const handleDeleteAccount = async (id) => {
-    const result = await swal.fire({
+    const result = await notify.fire({
       icon: "warning",
       title: "Hapus Account",
       text: "Account yang dihapus tidak dapat dikembalikan.",
@@ -157,7 +157,7 @@ const AccountsPage = () => {
     try {
       await deleteAccount(id);
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Berhasil",
         text: "Account berhasil dihapus.",
@@ -167,7 +167,7 @@ const AccountsPage = () => {
 
       fetchAccounts();
     } catch (error) {
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -203,14 +203,14 @@ const AccountsPage = () => {
 
   return (
     <MainLayout>
-      <div className="space-y-6 p-6">
+      <div className="space-y-6 p-4 sm:p-6">
         {/* Header */}
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">Account</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">Account</h1>
 
-            <p className="mt-1 text-muted">
+            <p className="mt-1 text-neutral-600">
               Kelola daftar akun kas dan bank perusahaan.
             </p>
           </div>
@@ -219,7 +219,7 @@ const AccountsPage = () => {
             <div ref={exportRef} className="relative">
               <button
                 onClick={() => setOpenExport((prev) => !prev)}
-                className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
+                className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-ink transition hover:bg-primary-100 hover:text-ink glass-button"
               >
                 <Download size={18} />
                 Export
@@ -232,7 +232,7 @@ const AccountsPage = () => {
               </button>
 
               {openExport && (
-                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card ">
+                <div className="absolute left-0 z-20 mt-2 w-52 overflow-hidden panel-dialog rounded-card">
                   <button
                     onClick={handleExportPDF}
                     className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-600 transition hover:bg-red-500/10 hover:text-red-600"
@@ -256,7 +256,7 @@ const AccountsPage = () => {
 
             <button
               onClick={() => setAddFormModal(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full glass-primary px-4 py-3 font-semibold transition hover:opacity-90"
             >
               <Plus size={18} />
               Tambah Account
@@ -266,12 +266,12 @@ const AccountsPage = () => {
 
         {/* Filter */}
 
-        {/* <div className="rounded-xl border border-border bg-card p-4 shadow-card"> */}
+        {/* <div className="p-4 panel-glass rounded-card"> */}
         <div className="flex flex-col gap-3 lg:flex-row">
           <div className="relative flex-1">
             <Search
               size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
             />
 
             <input
@@ -279,14 +279,14 @@ const AccountsPage = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari account..."
-              className="w-full rounded-lg border border-border bg-surface py-3 pl-10 pr-4 text-text outline-none focus:border-primary"
+              className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-3 pl-10 pr-4 text-ink outline-none"
             />
           </div>
 
           <select
             value={kind}
             onChange={(e) => setKind(e.target.value)}
-            className="rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none focus:border-primary"
+            className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 px-4 py-3 text-ink outline-none"
           >
             <option value="">Semua Jenis</option>
             <option value="CASH">Cash</option>
@@ -298,10 +298,10 @@ const AccountsPage = () => {
 
         {/* Desktop Table */}
 
-        <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-card lg:block">
+        <div className="hidden overflow-hidden lg:block panel-glass rounded-card">
           <table className="w-full">
-            <thead className="bg-secondary text-white">
-              {/* <thead className="border-b border-border bg-surface"> */}
+            <thead className="bg-primary-100 text-ink">
+              {/* <thead className="border-b border-primary-200 bg-white"> */}
               <tr className="text-center text-sm">
                 <th className="px-5 py-4">No</th>
                 <th className="px-5 py-4 text-left">Nama Account</th>
@@ -317,13 +317,13 @@ const AccountsPage = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-muted">
+                  <td colSpan={8} className="py-10 text-center text-neutral-600">
                     <Loading.Data text="Memuat data..." />
                   </td>
                 </tr>
               ) : filteredAccounts.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-10 text-center text-muted">
+                  <td colSpan={8} className="py-10 text-center text-neutral-600">
                     Tidak ada data.
                   </td>
                 </tr>
@@ -331,7 +331,7 @@ const AccountsPage = () => {
                 filteredAccounts.map((account, index) => (
                   <tr
                     key={account.id_account}
-                    className="group border-b text-center border-border transition hover:bg-primary hover:opacity-80"
+                    className="group border-b text-center border-primary-200 transition hover:bg-primary-100 hover:opacity-80"
                   >
                     <td
                       onClick={() => setSelectedAccountId(account.id_account)}
@@ -354,8 +354,8 @@ const AccountsPage = () => {
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
                           account.account_kind === "BANK"
-                            ? "bg-primary text-white"
-                            : "bg-secondary text-white"
+                            ? "glass-primary"
+                            : "bg-primary-100 text-ink"
                         }`}
                       >
                         {account.account_kind}
@@ -397,7 +397,7 @@ const AccountsPage = () => {
                             e.stopPropagation();
                             setEditingAccountId(account.id_account);
                           }}
-                          className="rounded-lg p-2 text-text transition hover:bg-primary/15"
+                          className="rounded-full p-2 text-ink transition glass-button"
                         >
                           <Pencil size={18} />
                         </button>
@@ -407,7 +407,7 @@ const AccountsPage = () => {
                             e.stopPropagation();
                             handleDeleteAccount(account.id_account);
                           }}
-                          className="rounded-lg p-2 text-red-600 transition hover:bg-red-500/10"
+                          className="rounded-full p-2 text-red-600 transition glass-button"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -424,11 +424,11 @@ const AccountsPage = () => {
 
         <div className="space-y-4 lg:hidden">
           {loading ? (
-            <div className="rounded-xl border border-border bg-card p-6 text-center text-muted shadow-card">
+            <div className="p-6 text-center text-neutral-600 panel-glass rounded-card">
               <Loading.Data text="Memuat data..." />
             </div>
           ) : filteredAccounts.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-6 text-center text-muted shadow-card">
+            <div className="p-6 text-center text-neutral-600 panel-glass rounded-card">
               Tidak ada account.
             </div>
           ) : (
@@ -436,15 +436,15 @@ const AccountsPage = () => {
               <div
                 key={account.id_account}
                 onClick={() => setSelectedAccountId(account.id_account)}
-                className="rounded-xl border border-border bg-card p-4 shadow-card"
+                className="p-4 panel-glass rounded-card"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="font-semibold text-secondary">
+                    <h3 className="font-semibold text-primary-strong">
                       {account.account_name}
                     </h3>
 
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="mt-1 text-sm text-neutral-600">
                       {account.bank_name ?? "-"}
                     </p>
                   </div>
@@ -452,15 +452,15 @@ const AccountsPage = () => {
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       account.account_kind === "BANK"
-                        ? "bg-primary text-white"
-                        : "bg-secondary text-white"
+                        ? "glass-primary"
+                        : "bg-primary-100 text-ink"
                     }`}
                   >
                     {account.account_kind}
                   </span>
                 </div>
 
-                <div className="mt-4 space-y-2 text-sm text-text">
+                <div className="mt-4 space-y-2 text-sm text-ink">
                   <p>
                     <span className="font-medium">Cabang :</span>{" "}
                     {account.branch_name ?? "-"}
@@ -483,7 +483,7 @@ const AccountsPage = () => {
                       e.stopPropagation();
                       setEditingAccountId(account.id_account);
                     }}
-                    className="rounded-lg p-2 text-text transition hover:bg-primary/15"
+                    className="rounded-full p-2 text-ink transition glass-button"
                   >
                     <Pencil size={18} />
                   </button>
@@ -493,7 +493,7 @@ const AccountsPage = () => {
                       e.stopPropagation();
                       handleDeleteAccount(account.id_account);
                     }}
-                    className="rounded-lg p-2 text-red-600 transition hover:bg-red-500/10"
+                    className="rounded-full p-2 text-red-600 transition glass-button"
                   >
                     <Trash2 size={18} />
                   </button>

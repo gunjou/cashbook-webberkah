@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 import { getAccountDetail } from "./account.service";
 import Loading from "../../components/Loading";
 
@@ -43,7 +43,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
     } catch (error) {
       onClose();
 
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text: error.response?.data?.message ?? "Terjadi kesalahan.",
@@ -59,7 +59,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
     if (loading) return;
 
     if (!accountName) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Nama Account wajib diisi.",
@@ -70,7 +70,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
       accountKind === "BANK" &&
       (!bankName || !accountNumber || !accountHolder)
     ) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Data rekening bank wajib diisi.",
@@ -78,7 +78,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
     }
 
     if (accountKind === "EWALLET" && (!accountNumber || !accountHolder)) {
-      return swal.fire({
+      return notify.fire({
         icon: "warning",
         title: "Data Belum Lengkap",
         text: "Data E-Wallet wajib diisi.",
@@ -107,24 +107,24 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* Header */}
 
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-secondary">Edit Account</h2>
+            <h2 className="text-lg font-semibold text-ink">Edit Account</h2>
 
-            <p className="text-sm text-muted">Perbarui informasi account.</p>
+            <p className="text-sm text-neutral-600">Perbarui informasi account.</p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-full p-2 transition text-secondary hover:bg-primary hover:text-white"
+            className="rounded-full p-2 transition text-primary-strong hover:text-ink glass-button"
           >
             <X size={20} />
           </button>
@@ -146,7 +146,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                 {/* Nama Account */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Nama Account
                   </label>
 
@@ -155,21 +155,21 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                     value={accountName}
                     onChange={(e) => setAccountName(e.target.value)}
                     placeholder="Masukkan nama account"
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                   />
                 </div>
 
                 {/* Jenis Account */}
 
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-text">
+                  <label className="mb-2 block text-sm font-medium text-ink">
                     Jenis Account
                   </label>
 
                   <select
                     value={accountKind}
                     onChange={(e) => setAccountKind(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                    className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                   >
                     <option value="CASH">Cash</option>
                     <option value="BANK">Bank</option>
@@ -182,7 +182,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                 {accountKind === "BANK" && (
                   <>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Nama Bank
                       </label>
 
@@ -191,19 +191,19 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={bankName}
                         onChange={(e) => setBankName(e.target.value)}
                         placeholder="Contoh: Bank Mandiri"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Jenis Rekening
                       </label>
 
                       <select
                         value={accountType}
                         onChange={(e) => setAccountType(e.target.value)}
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       >
                         <option value="">Pilih Jenis Rekening</option>
                         <option value="TABUNGAN">Tabungan</option>
@@ -213,7 +213,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Cabang
                       </label>
 
@@ -222,12 +222,12 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={branchName}
                         onChange={(e) => setBranchName(e.target.value)}
                         placeholder="Contoh: Gerung"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Nomor Rekening
                       </label>
 
@@ -236,12 +236,12 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={accountNumber}
                         onChange={(e) => setAccountNumber(e.target.value)}
                         placeholder="Masukkan nomor rekening"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Pemilik Rekening
                       </label>
 
@@ -250,7 +250,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={accountHolder}
                         onChange={(e) => setAccountHolder(e.target.value)}
                         placeholder="Masukkan nama pemilik rekening"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
                   </>
@@ -261,7 +261,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                 {accountKind === "EWALLET" && (
                   <>
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Nomor E-Wallet
                       </label>
 
@@ -270,12 +270,12 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={accountNumber}
                         onChange={(e) => setAccountNumber(e.target.value)}
                         placeholder="Masukkan nomor E-Wallet"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-sm font-medium text-text">
+                      <label className="mb-2 block text-sm font-medium text-ink">
                         Pemilik Account
                       </label>
 
@@ -284,7 +284,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
                         value={accountHolder}
                         onChange={(e) => setAccountHolder(e.target.value)}
                         placeholder="Masukkan nama pemilik"
-                        className="w-full rounded-lg border border-border bg-surface px-4 py-3 text-text outline-none transition focus:border-primary"
+                        className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-4 py-3 text-ink outline-none transition"
                       />
                     </div>
                   </>
@@ -295,12 +295,12 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
 
           {/* Footer */}
 
-          <div className="flex justify-end gap-3 border-t border-border px-5 py-4">
+          <div className="flex justify-end gap-3 border-t border-primary-200 px-5 py-4">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="rounded-lg border border-border bg-surface px-5 py-2 font-medium text-text transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70"
+              className="rounded-full px-5 py-2 font-medium text-ink transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-70 glass-button"
             >
               Batal
             </button>
@@ -308,7 +308,7 @@ const AccountEditModal = ({ accountId, onClose, onSave }) => {
             <button
               type="submit"
               disabled={loading || fetching}
-              className="flex min-w-[170px] items-center justify-center rounded-lg bg-primary px-5 py-2 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex min-w-[170px] items-center justify-center rounded-full glass-primary px-5 py-2 font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? (
                 <Loading.Button text="Menyimpan..." />

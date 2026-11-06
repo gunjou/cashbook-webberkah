@@ -27,28 +27,28 @@ const OpeningBalanceCard = ({ data, onClick, onEdit, onHistory }) => {
   return (
     <div
       onClick={onClick}
-      className="group flex w-full flex-col rounded-2xl border border-border bg-card p-5 text-left shadow-card transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg"
+      className="group flex w-full flex-col p-5 text-left transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg panel-glass rounded-card"
     >
       {/* Header */}
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-secondary">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary-strong">
             {getIcon()}
           </div>
 
           <div>
-            <h3 className="font-semibold text-secondary">
+            <h3 className="font-semibold text-primary-strong">
               {data.account_name}
             </h3>
 
-            <p className="mt-1 text-xs uppercase tracking-wide text-muted">
+            <p className="mt-1 text-xs uppercase tracking-wide text-neutral-600">
               {data.account_kind}
             </p>
           </div>
         </div>
 
-        <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-secondary">
+        <span className="rounded-full bg-primary/20 px-3 py-1 text-xs font-semibold text-primary-strong">
           Latest
         </span>
       </div>
@@ -56,17 +56,17 @@ const OpeningBalanceCard = ({ data, onClick, onEdit, onHistory }) => {
       {/* Opening Balance */}
 
       <div className="mt-6">
-        <p className="text-sm text-muted">Opening Balance</p>
+        <p className="text-sm text-neutral-600">Opening Balance</p>
 
-        <h2 className="mt-2 break-all text-2xl font-bold text-text">
+        <h2 className="mt-2 break-all text-2xl font-bold text-ink">
           <CurrencyText value={data.opening_balance} />
         </h2>
       </div>
 
       {/* Footer */}
 
-      <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-        <div className="flex items-center gap-2 text-sm text-muted">
+      <div className="mt-6 flex items-center justify-between border-t border-primary-200 pt-4">
+        <div className="flex items-center gap-2 text-sm text-neutral-600">
           <Calendar size={16} />
 
           {formatPeriod(data.effective_date)}
@@ -75,14 +75,14 @@ const OpeningBalanceCard = ({ data, onClick, onEdit, onHistory }) => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => onEdit(data.id_opening_balance)}
-            className="rounded-lg p-2 text-text transition hover:bg-primary hover:text-white"
+            className="rounded-full p-2 text-ink transition hover:text-ink glass-button"
           >
             <Pencil size={18} />
           </button>
 
           <div
             onClick={() => onHistory(data.id_account)}
-            className="flex items-center gap-2 text-sm font-medium text-secondary transition cursor-pointer hover:px-2 hover:py-2 hover:rounded-lg hover:bg-primary hover:text-white group-hover:translate-x-1"
+            className="flex items-center gap-2 text-sm font-medium text-primary-strong transition cursor-pointer hover:px-2 hover:py-2 hover:rounded-lg hover:bg-primary-100 hover:text-ink group-hover:translate-x-1"
           >
             History
             <ArrowRight size={16} />

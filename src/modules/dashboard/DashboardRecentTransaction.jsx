@@ -10,14 +10,14 @@ const DashboardRecentTransaction = ({ transactions, loading }) => {
         {[...Array(5)].map((_, index) => (
           <div
             key={index}
-            className="flex items-center justify-between border-b border-border pb-3 last:border-none"
+            className="flex items-center justify-between border-b border-primary-200 pb-3 last:border-none"
           >
             <div className="flex-1">
-              <div className="h-3 w-36 rounded bg-gray-200" />
-              <div className="mt-2 h-2.5 w-52 rounded bg-gray-100" />
+              <div className="h-3 w-36 rounded bg-neutral-200" />
+              <div className="mt-2 h-2.5 w-52 rounded bg-neutral-100" />
             </div>
 
-            <div className="h-4 w-20 rounded bg-gray-200" />
+            <div className="h-4 w-20 rounded bg-neutral-200" />
           </div>
         ))}
       </div>
@@ -26,7 +26,7 @@ const DashboardRecentTransaction = ({ transactions, loading }) => {
 
   if (!transactions.length) {
     return (
-      <div className="flex h-[220px] items-center justify-center text-sm text-muted">
+      <div className="flex h-[220px] items-center justify-center text-sm text-neutral-600">
         Belum ada transaksi.
       </div>
     );
@@ -40,7 +40,7 @@ const DashboardRecentTransaction = ({ transactions, loading }) => {
         return (
           <div
             key={item.id_transaction}
-            className="flex items-start justify-between border-b border-border pb-3 last:border-none"
+            className="flex items-start justify-between border-b border-primary-200 pb-3 last:border-none"
           >
             <div className="flex min-w-0 flex-1 gap-2.5">
               {/* Icon */}
@@ -64,7 +64,7 @@ const DashboardRecentTransaction = ({ transactions, loading }) => {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-3">
                   <p
-                    className="truncate text-sm font-medium text-secondary"
+                    className="truncate text-sm font-medium text-primary-strong"
                     title={item.transaction_description}
                   >
                     {item.transaction_description.length > 25
@@ -82,7 +82,7 @@ const DashboardRecentTransaction = ({ transactions, loading }) => {
                   </div>
                 </div>
 
-                <div className="mt-1 text-xs text-muted">
+                <div className="mt-1 text-xs text-neutral-600">
                   {/* Desktop */}
                   <p className="hidden truncate sm:block">
                     {item.category_name}

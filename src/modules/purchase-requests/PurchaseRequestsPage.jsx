@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Download, History, List } from "lucide-react";
 
 import MainLayout from "../../layouts/MainLayout";
-import swal from "../../lib/swal";
+import notify from "../../lib/notify";
 
 import PurchaseRequestFilter from "./PurchaseRequestFilter";
 import PurchaseRequestTable from "./PurchaseRequestTable";
@@ -119,7 +119,7 @@ const PurchaseRequestsPage = () => {
       console.error(error);
       setData([]);
 
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Data",
         text:
@@ -227,7 +227,7 @@ const PurchaseRequestsPage = () => {
       console.error(error);
       setOpenDetail(false);
 
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Gagal Memuat Detail",
         text:
@@ -251,7 +251,7 @@ const PurchaseRequestsPage = () => {
       : displayedData;
 
     if (!exportData.length) {
-      await swal.fire({
+      await notify.fire({
         icon: "warning",
         title: "Tidak Ada Data",
         text: "Tidak ada data pengajuan yang dapat diexport.",
@@ -273,7 +273,7 @@ const PurchaseRequestsPage = () => {
     } catch (error) {
       console.error("Gagal export PDF:", error);
 
-      await swal.fire({
+      await notify.fire({
         icon: "error",
         title: "Export Gagal",
         text: error?.message || "Gagal melakukan export PDF.",
@@ -353,7 +353,7 @@ const PurchaseRequestsPage = () => {
 
       setOpenDetail(false);
 
-      await swal.fire({
+      await notify.fire({
         icon: "success",
         title: "Pembayaran Berhasil",
         text: "Transaksi berhasil dicatat dan pengajuan telah ditandai sebagai Paid.",
@@ -363,7 +363,7 @@ const PurchaseRequestsPage = () => {
     } catch (error) {
       console.error("Payment error:", error);
 
-      swal.fire({
+      notify.fire({
         icon: "error",
         title: "Pembayaran Gagal",
         text:
@@ -378,7 +378,7 @@ const PurchaseRequestsPage = () => {
   };
 
   //   const handleDummy = (message) => {
-  //     swal.fire({
+  //     notify.fire({
   //       icon: "info",
   //       title: "Segera Hadir",
   //       text: message,
@@ -394,10 +394,10 @@ const PurchaseRequestsPage = () => {
 
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-secondary">
+            <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">
               {viewMode === "ACTIVE" ? "Pengajuan" : "History Pengajuan"}
             </h1>
-            <p className="mt-2 text-muted">
+            <p className="mt-2 text-neutral-600">
               {viewMode === "ACTIVE"
                 ? "Kelola dan monitor pengajuan pembelian perusahaan."
                 : "Riwayat pengajuan pembelian perusahaan."}
@@ -409,7 +409,7 @@ const PurchaseRequestsPage = () => {
               type="button"
               onClick={handleExportPDF}
               disabled={exportLoading || loading || !displayedData.length}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-white shadow-soft transition-all hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full glass-primary px-4 py-2.5 text-[11px] font-black uppercase tracking-wider shadow-soft transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {exportLoading ? (
                 <>
@@ -433,7 +433,7 @@ const PurchaseRequestsPage = () => {
                   "Fitur membuat pengajuan baru akan tersedia pada tahap berikutnya.",
                 )
               }
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full glass-primary px-4 py-3 text-sm font-semibold transition hover:opacity-90"
             >
               <Plus size={18} />
               Pengajuan Baru
@@ -442,7 +442,7 @@ const PurchaseRequestsPage = () => {
             <button
               type="button"
               onClick={handleViewMode}
-              className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition glass-button text-ink"
             >
               {viewMode === "ACTIVE" ? (
                 <>

@@ -56,20 +56,20 @@ const TransactionItem = ({
         >
           {/* Expand */}
 
-          <div className="w-4 shrink-0 text-gray-500">
+          <div className="w-4 shrink-0 text-neutral-500">
             {expanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
           </div>
 
           {/* Time */}
 
-          <div className="w-20 shrink-0 text-xs text-gray-600">
+          <div className="w-20 shrink-0 text-xs text-neutral-600">
             {transactionLabel}
           </div>
 
           {/* Category */}
 
           <div
-            className="w-28 shrink-0 truncate text-xs font-semibold uppercase tracking-wide text-gray-500"
+            className="w-28 shrink-0 truncate text-xs font-semibold uppercase tracking-wide text-neutral-500"
             title={transaction.category_name}
           >
             {transaction.category_name}
@@ -78,7 +78,7 @@ const TransactionItem = ({
           {/* Description */}
 
           <div
-            className="flex-1 line-clamp-2 leading-5 text-sm text-gray-900"
+            className="flex-1 line-clamp-2 leading-5 text-sm text-neutral-900"
             title={transaction.transaction_description}
           >
             {transaction.transaction_description}
@@ -87,7 +87,7 @@ const TransactionItem = ({
           {/* Attachment */}
 
           <div className="flex w-6 shrink-0 justify-center">
-            {hasAttachment && <Paperclip size={14} className="text-gray-400" />}
+            {hasAttachment && <Paperclip size={14} className="text-neutral-400" />}
           </div>
 
           {/* Amount */}
@@ -111,11 +111,11 @@ const TransactionItem = ({
               {/* Reference */}
 
               <div>
-                <p className="text-[11px] uppercase tracking-widest text-gray-500">
+                <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                   Reference Number
                 </p>
 
-                <p className="mt-1 text-sm text-gray-900">
+                <p className="mt-1 text-sm text-neutral-900">
                   {transaction.reference_number || "-"}
                 </p>
               </div>
@@ -123,11 +123,11 @@ const TransactionItem = ({
               {/* Created By */}
 
               <div>
-                <p className="text-[11px] uppercase tracking-widest text-gray-500">
+                <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                   Created By
                 </p>
 
-                <p className="mt-1 text-sm text-gray-900">
+                <p className="mt-1 text-sm text-neutral-900">
                   {transaction.created_by || "-"}
                 </p>
               </div>
@@ -139,11 +139,11 @@ const TransactionItem = ({
                   {/* Notes */}
                   {transaction.note && (
                     <div>
-                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                      <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                         Notes
                       </p>
 
-                      <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800">
+                      <p className="mt-1 whitespace-pre-wrap text-sm text-neutral-800">
                         {transaction.note}
                       </p>
                     </div>
@@ -152,7 +152,7 @@ const TransactionItem = ({
                   {/* Items */}
                   {transaction.items?.length > 0 && (
                     <div>
-                      <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                      <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                         Items
                       </p>
 
@@ -163,20 +163,20 @@ const TransactionItem = ({
                             {transaction.items.map((item) => (
                               <div
                                 key={item.id_item}
-                                className="flex items-center justify-between gap-3 border-b border-gray-100 py-1.5 last:border-0"
+                                className="flex items-center justify-between gap-3 border-b border-neutral-100 py-1.5 last:border-0"
                               >
                                 <div className="min-w-0">
-                                  <p className="truncate text-xs text-gray-700">
+                                  <p className="truncate text-xs text-neutral-700">
                                     {item.item_no}. {item.keterangan}
                                   </p>
 
-                                  <p className="text-[10px] text-gray-400">
+                                  <p className="text-[11px] text-neutral-400">
                                     {item.jumlah} {item.unit} ×{" "}
                                     {formatCurrency(item.harga_satuan)}
                                   </p>
                                 </div>
 
-                                <p className="shrink-0 text-xs font-medium text-gray-700">
+                                <p className="shrink-0 text-xs font-medium text-neutral-700">
                                   {formatCurrency(item.total)}
                                 </p>
                               </div>
@@ -250,19 +250,19 @@ const TransactionItem = ({
               {/* Time */}
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] text-gray-500">
+                <span className="text-[11px] text-neutral-500">
                   {transactionLabel}
                 </span>
 
                 {hasAttachment && (
-                  <Paperclip size={12} className="text-gray-400" />
+                  <Paperclip size={12} className="text-neutral-400" />
                 )}
               </div>
 
               {/* Description */}
 
               <h3
-                className="mt-1 line-clamp-2 text-[12px] font-semibold leading-5 text-gray-600"
+                className="mt-1 line-clamp-2 text-[12px] font-semibold leading-5 text-neutral-600"
                 title={transaction.transaction_description}
               >
                 {transaction.transaction_description}
@@ -271,7 +271,7 @@ const TransactionItem = ({
               {/* Category */}
 
               <p
-                className="mt-1 truncate text-[11px] uppercase tracking-wide text-gray-500"
+                className="mt-1 truncate text-[11px] uppercase tracking-wide text-neutral-500"
                 title={transaction.category_name}
               >
                 {transaction.category_name}
@@ -290,7 +290,7 @@ const TransactionItem = ({
                 <CurrencyText value={transaction.amount} />
               </span>
 
-              <div className="mt-2 text-gray-400">
+              <div className="mt-2 text-neutral-400">
                 {expanded ? (
                   <ChevronDown size={18} />
                 ) : (
@@ -312,11 +312,11 @@ const TransactionItem = ({
               {/* Reference */}
 
               <div>
-                <p className="text-[11px] uppercase tracking-widest text-gray-500">
+                <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                   Reference Number
                 </p>
 
-                <p className="mt-1 break-all text-sm text-gray-900">
+                <p className="mt-1 break-all text-sm text-neutral-900">
                   {transaction.reference_number || "-"}
                 </p>
               </div>
@@ -324,11 +324,11 @@ const TransactionItem = ({
               {/* Created By */}
 
               <div>
-                <p className="text-[11px] uppercase tracking-widest text-gray-500">
+                <p className="text-[11px] uppercase tracking-widest text-neutral-500">
                   Created By
                 </p>
 
-                <p className="mt-1 text-sm text-gray-900">
+                <p className="mt-1 text-sm text-neutral-900">
                   {transaction.created_by || "-"}
                 </p>
               </div>
@@ -336,11 +336,11 @@ const TransactionItem = ({
               {/* Notes */}
               {transaction.note && (
                 <div className="min-w-0">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400 sm:text-[11px] sm:text-gray-500">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400 sm:text-[11px] sm:text-gray-500">
                     Notes
                   </p>
 
-                  <p className="mt-1 whitespace-pre-wrap break-words text-xs leading-relaxed text-gray-700 sm:text-sm sm:text-gray-800">
+                  <p className="mt-1 whitespace-pre-wrap break-words text-xs leading-relaxed text-neutral-700 sm:text-sm sm:text-gray-800">
                     {transaction.note}
                   </p>
                 </div>
@@ -349,7 +349,7 @@ const TransactionItem = ({
               {/* Items */}
               {transaction.items?.length > 0 && (
                 <div className="mt-3 min-w-0">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
                     Items
                   </p>
 
@@ -357,20 +357,20 @@ const TransactionItem = ({
                     {transaction.items.map((item) => (
                       <div
                         key={item.id_item}
-                        className="flex min-w-0 flex-col gap-0.5 border-b border-gray-100 py-1.5 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+                        className="flex min-w-0 flex-col gap-0.5 border-b border-neutral-100 py-1.5 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
                       >
                         <div className="min-w-0">
-                          <p className="break-words text-xs text-gray-700">
+                          <p className="break-words text-xs text-neutral-700">
                             {item.item_no}. {item.keterangan}
                           </p>
 
-                          <p className="text-[10px] text-gray-400">
+                          <p className="text-[11px] text-neutral-400">
                             {item.jumlah} {item.unit} ×{" "}
                             {formatCurrency(item.harga_satuan)}
                           </p>
                         </div>
 
-                        <p className="text-xs font-medium text-gray-700 sm:shrink-0">
+                        <p className="text-xs font-medium text-neutral-700 sm:shrink-0">
                           {formatCurrency(item.total)}
                         </p>
                       </div>

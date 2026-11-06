@@ -2,6 +2,8 @@ import { useEffect } from "react";
 
 import { ExternalLink, ImageOff, X } from "lucide-react";
 
+import AttachmentViewer from "../../components/AttachmentViewer";
+
 const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
   useEffect(() => {
     if (!open) return;
@@ -22,7 +24,6 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
   if (!open) return null;
 
   const fileUrl = transaction?.attachment_url;
-  const isPdf = /\.pdf$/i.test((fileUrl || "").split(/[?#]/)[0]);
 
   return (
     <div
@@ -31,26 +32,26 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-modal"
+        className="flex max-h-[90dvh] w-full max-w-5xl flex-col overflow-hidden panel-dialog rounded-card"
       >
         {/* ==========================
             Header
         ========================== */}
 
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+        <div className="flex items-center justify-between border-b border-primary-200 px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-secondary">
+            <h2 className="text-lg font-semibold text-ink">
               Bukti Transaksi
             </h2>
 
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 text-sm text-neutral-600">
               {transaction?.transaction_description ?? "-"}
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="rounded-lg p-2 transition hover:bg-surface"
+            className="rounded-full p-2 transition glass-button"
           >
             <X size={20} />
           </button>
@@ -60,21 +61,11 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
             Preview
         ========================== */}
 
-        <div className="flex flex-1 items-center justify-center overflow-auto bg-surface p-6">
-          {fileUrl && isPdf ? (
-            <iframe
-              src={fileUrl}
-              title="Bukti Transaksi"
-              className="h-[70vh] w-full rounded-xl border border-border bg-white shadow-card"
-            />
-          ) : fileUrl ? (
-            <img
-              src={fileUrl}
-              alt="Attachment"
-              className="max-h-[70vh] max-w-full rounded-xl border border-border bg-white object-contain shadow-card"
-            />
+        <div className="flex h-[70dvh] min-h-0 flex-col overflow-hidden bg-white">
+          {fileUrl ? (
+            <AttachmentViewer url={fileUrl} name="Bukti Transaksi" />
           ) : (
-            <div className="flex flex-col items-center text-muted">
+            <div className="m-auto flex flex-col items-center text-neutral-600">
               <ImageOff size={60} />
 
               <p className="mt-4">Tidak ada attachment.</p>
@@ -86,8 +77,8 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
             Footer
         ========================== */}
 
-        <div className="flex items-center justify-between border-t border-border px-6 py-4">
-          <div className="text-sm text-muted">
+        <div className="flex items-center justify-between border-t border-primary-200 px-6 py-4">
+          <div className="text-sm text-neutral-600">
             {transaction?.reference_number || "-"}
           </div>
 
@@ -96,7 +87,7 @@ const TransactionAttachmentModal = ({ open, onClose, transaction = null }) => {
               href={fileUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm transition hover:bg-primary hover:text-white"
+              className="flex items-center gap-2 rounded-lg border border-primary-200 px-4 py-2 text-sm transition hover:bg-primary-100 hover:text-ink"
             >
               <ExternalLink size={16} />
               Buka di Tab Baru

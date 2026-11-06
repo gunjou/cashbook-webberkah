@@ -93,8 +93,8 @@ const QuickFilterButton = ({ filter, activeFilter, onClick }) => {
       onClick={() => onClick(filter.key)}
       className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
         isActive
-          ? "bg-primary text-white"
-          : "border border-border bg-surface hover:bg-primary/10"
+          ? "glass-primary"
+          : "border border-primary-200 bg-white hover:bg-primary/10"
       }`}
     >
       {filter.label}
@@ -120,8 +120,8 @@ const CustomPeriodDropdown = ({
         onClick={onToggle}
         className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
           isActive
-            ? "bg-primary text-white"
-            : "border border-border bg-surface hover:bg-primary/10"
+            ? "glass-primary"
+            : "border border-primary-200 bg-white hover:bg-primary/10"
         }`}
       >
         <CalendarDays size={16} />
@@ -134,15 +134,11 @@ const CustomPeriodDropdown = ({
 
       {open && (
         <div
-          className="
-            absolute z-20 mt-2 w-72 rounded-xl border border-border bg-card p-4 shadow-card
-            left-1/2 -translate-x-1/2
-            sm:left-0 sm:translate-x-0
-          "
+          className="absolute z-20 mt-2 w-72 p-4 left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 panel-dialog rounded-card"
         >
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-xs text-muted">
+              <label className="mb-1 block text-xs text-neutral-600">
                 Tanggal Mulai
               </label>
 
@@ -155,12 +151,12 @@ const CustomPeriodDropdown = ({
                     date_from: event.target.value,
                   })
                 }
-                className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-3 py-2 text-sm outline-none"
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs text-muted">
+              <label className="mb-1 block text-xs text-neutral-600">
                 Tanggal Selesai
               </label>
 
@@ -173,14 +169,14 @@ const CustomPeriodDropdown = ({
                     date_to: event.target.value,
                   })
                 }
-                className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full px-3 py-2 text-sm outline-none"
               />
             </div>
 
             <button
               type="button"
               onClick={onApply}
-              className="w-full rounded-lg bg-primary py-2 text-sm font-medium text-white transition hover:opacity-90"
+              className="w-full rounded-full glass-primary py-2 text-sm font-medium transition hover:opacity-90"
             >
               Terapkan
             </button>
@@ -196,29 +192,29 @@ const EmptyTransactionReceipt = () => {
     <div className="overflow-hidden border border-neutral-300 bg-white shadow-sm">
       {/* Receipt Header */}
       <div className="border-b border-dashed border-neutral-300 px-5 py-4 font-mono">
-        <p className="text-center text-[11px] uppercase tracking-[0.3em] text-gray-500">
+        <p className="text-center text-[11px] uppercase tracking-[0.3em] text-neutral-500">
           TRANSACTION RECEIPT
         </p>
 
-        <p className="mt-2 text-center text-lg font-bold tracking-wide text-gray-900">
+        <p className="mt-2 text-center text-lg font-bold tracking-wide text-neutral-900">
           BELUM ADA TRANSAKSI
         </p>
       </div>
 
       {/* Body */}
       <div className="flex flex-col items-center px-6 py-12 font-mono">
-        <p className="text-center text-sm text-gray-700">
+        <p className="text-center text-sm text-neutral-700">
           Tidak ada transaksi pada periode yang dipilih.
         </p>
 
-        <p className="mt-2 text-center text-xs uppercase tracking-[0.2em] text-gray-500">
+        <p className="mt-2 text-center text-xs uppercase tracking-[0.2em] text-neutral-500">
           Silakan ubah filter atau tambahkan transaksi baru.
         </p>
       </div>
 
       {/* Footer */}
       <div className="border-t border-dashed border-neutral-300 px-5 py-3">
-        <p className="text-center font-mono text-[11px] tracking-[0.25em] text-gray-400">
+        <p className="text-center font-mono text-[11px] tracking-[0.25em] text-neutral-400">
           *** END OF RECEIPT ***
         </p>
       </div>
@@ -238,9 +234,9 @@ const TransactionHeader = ({
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
       <div>
-        <h1 className="text-3xl font-bold text-secondary">Transactions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink lg:text-3xl">Transactions</h1>
 
-        <p className="mt-2 text-muted">
+        <p className="mt-2 text-neutral-600">
           Kelola seluruh transaksi operasional perusahaan.
         </p>
       </div>
@@ -253,7 +249,7 @@ const TransactionHeader = ({
             onClick={onToggleExport}
             aria-expanded={openExport}
             aria-haspopup="menu"
-            className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-text transition hover:bg-primary hover:text-white"
+            className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-medium text-ink transition hover:bg-primary-100 hover:text-ink glass-button"
           >
             <Download size={18} />
             Export
@@ -266,7 +262,7 @@ const TransactionHeader = ({
           {openExport && (
             <div
               role="menu"
-              className="absolute left-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-card shadow-card"
+              className="absolute left-0 z-20 mt-2 w-52 overflow-hidden panel-dialog rounded-card"
             >
               <button
                 type="button"
@@ -297,7 +293,7 @@ const TransactionHeader = ({
         <button
           type="button"
           onClick={onAddTransfer}
-          className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition glass-button text-ink"
         >
           <ArrowLeftRight size={18} />
           Transfer
@@ -307,7 +303,7 @@ const TransactionHeader = ({
         <button
           type="button"
           onClick={onAddTransaction}
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="flex items-center gap-2 rounded-full glass-primary px-4 py-3 text-sm font-semibold transition hover:opacity-90"
         >
           <Plus size={18} />
           Tambah Transaksi
@@ -337,7 +333,7 @@ const TransactionFilters = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="relative flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3 shadow-card">
+    <div className="relative flex flex-wrap items-center gap-2 p-3 panel-glass rounded-card">
       {/* Quick Filter */}
       <div className="flex flex-wrap gap-2">
         {QUICK_FILTERS.map((filter) => {
@@ -368,13 +364,13 @@ const TransactionFilters = ({
       </div>
 
       {/* Separator */}
-      <div className="hidden h-8 w-px bg-border lg:block" />
+      <div className="hidden h-8 w-px bg-primary-200 lg:block" />
 
       {/* Search */}
       <div className="relative min-w-[220px] flex-1">
         <Search
           size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
         />
 
         <input
@@ -382,7 +378,7 @@ const TransactionFilters = ({
           onChange={(event) => onSearchChange(event.target.value)}
           onKeyDown={onSearchKeyDown}
           placeholder="Cari kategori atau deskripsi..."
-          className="w-full rounded-lg border border-border bg-surface py-2.5 pl-10 pr-4 text-sm outline-none transition focus:border-primary"
+          className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-full py-2.5 pl-10 pr-4 text-sm outline-none transition"
         />
       </div>
 
@@ -391,13 +387,13 @@ const TransactionFilters = ({
       <div className="relative">
         <Landmark
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
         />
 
         <select
           value={selectedAccount}
           onChange={(event) => onAccountChange(event.target.value)}
-          className="w-[160px] appearance-none rounded-lg border border-border bg-surface py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+          className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-[160px] appearance-none py-2.5 pl-10 pr-8 text-sm outline-none transition"
         >
           <option value="">All Account</option>
 
@@ -414,13 +410,13 @@ const TransactionFilters = ({
       <div className="relative">
         <Tag
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
         />
 
         <select
           value={selectedCategory}
           onChange={(event) => onCategoryChange(event.target.value)}
-          className="w-[160px] appearance-none rounded-lg border border-border bg-surface py-2.5 pl-10 pr-8 text-sm outline-none transition focus:border-primary"
+          className="rounded-2xl bg-white/70 ring-1 ring-ink/8 focus:ring-2 focus:ring-primary-500 w-[160px] appearance-none py-2.5 pl-10 pr-8 text-sm outline-none transition"
         >
           <option value="">All Kategori</option>
 

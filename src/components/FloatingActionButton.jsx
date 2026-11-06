@@ -4,6 +4,7 @@ const FloatingActionButton = ({ onClick }) => {
   return (
     <button
       onClick={onClick}
+      aria-label="Tambah transaksi"
       className="
       fixed
 
@@ -21,11 +22,7 @@ const FloatingActionButton = ({ onClick }) => {
 
       rounded-full
 
-      bg-primary
-
-      text-white
-
-      shadow-xl
+      glass-primary
 
       transition
 

@@ -15,13 +15,13 @@ const DashboardExpenseCategory = ({ data, loading }) => {
         {[...Array(4)].map((_, i) => (
           <div key={i}>
             <div className="mb-1 flex justify-between">
-              <div className="h-3 w-24 rounded bg-gray-200" />
-              <div className="h-3 w-10 rounded bg-gray-200" />
+              <div className="h-3 w-24 rounded bg-neutral-200" />
+              <div className="h-3 w-10 rounded bg-neutral-200" />
             </div>
 
-            <div className="mb-2 h-3 w-32 rounded bg-gray-200" />
+            <div className="mb-2 h-3 w-32 rounded bg-neutral-200" />
 
-            <div className="h-1.5 rounded-full bg-gray-200" />
+            <div className="h-1.5 rounded-full bg-neutral-200" />
           </div>
         ))}
       </div>
@@ -30,7 +30,7 @@ const DashboardExpenseCategory = ({ data, loading }) => {
 
   if (!data.length) {
     return (
-      <div className="flex h-[260px] items-center justify-center text-sm text-muted">
+      <div className="flex h-[260px] items-center justify-center text-sm text-neutral-600">
         Belum ada data pengeluaran.
       </div>
     );
@@ -50,25 +50,25 @@ const DashboardExpenseCategory = ({ data, loading }) => {
                 }`}
               />
 
-              <span className="truncate text-sm font-medium text-secondary">
+              <span className="truncate text-sm font-medium text-primary-strong">
                 {item.category_name}
               </span>
             </div>
 
-            <span className="ml-3 text-xs font-semibold text-secondary">
+            <span className="ml-3 text-xs font-semibold text-primary-strong">
               {item.percentage}%
             </span>
           </div>
 
           {/* Amount */}
 
-          <div className="mt-0.5 text-xs text-muted">
+          <div className="mt-0.5 text-xs text-neutral-600">
             <CurrencyText value={item.amount} />
           </div>
 
           {/* Progress */}
 
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface">
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white">
             <div
               className={`h-full rounded-full transition-all ${
                 colors[index % colors.length]
