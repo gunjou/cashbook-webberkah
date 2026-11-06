@@ -30,3 +30,6 @@
 .agents/
 .claude/
 skills-lock.json
+
+# disalin dari pdfjs-dist saat start/build
+/public/pdf.worker.min.js

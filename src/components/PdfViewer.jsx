@@ -8,9 +8,15 @@ const RENDER_MARGIN = "600px";
 let pdfjsPromise = null;
 
 // Dimuat saat dibutuhkan supaya tidak membebani bundle awal. Build legacy dipakai
-// agar jalan di browser HP lama.
+// agar jalan di browser HP lama. Worker disalin utuh ke public/ oleh skrip npm:
+// kalau ikut dibundel, minifier CRA merusak private field-nya (SyntaxError).
+// Berekstensi .js karena server bisa mengirim .mjs dengan MIME yang salah.
 const loadPdfjs = () => {
-  pdfjsPromise ??= import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjsPromise ??= import("pdfjs-dist/legacy/build/pdf.mjs").then((pdfjs) => {
+    pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.min.js`;
+
+    return pdfjs;
+  });
 
   return pdfjsPromise;
 };
@@ -87,7 +93,6 @@ const PdfViewer = ({ blob, onError }) => {
   useEffect(() => {
     let cancelled = false;
     let loadingTask = null;
-    let worker = null;
 
     const load = async () => {
       try {
@@ -96,13 +101,6 @@ const PdfViewer = ({ blob, onError }) => {
 
         if (cancelled) return;
 
-        // Satu worker per dokumen: worker yang dokumennya sudah ditutup tidak bisa
-        // dipakai lagi, sehingga PDF berikutnya gagal dibuka. Bukan workerSrc seperti
-        // di Vite, karena CRA menjalankan babel ke file .mjs dan merusak hasilnya.
-        worker = new Worker(
-          new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url),
-        );
-        pdfjs.GlobalWorkerOptions.workerPort = worker;
         loadingTask = pdfjs.getDocument({ data });
 
         const pdf = await loadingTask.promise;
@@ -126,7 +124,7 @@ const PdfViewer = ({ blob, onError }) => {
     return () => {
       cancelled = true;
       setPages([]);
-      loadingTask?.destroy().finally(() => worker.terminate());
+      loadingTask?.destroy();
     };
   }, [blob, onError]);
 
