@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   CalendarDays,
   CheckCircle2,
-  FileText,
-  ImagePlus,
   Loader2,
   X,
 } from "lucide-react";
@@ -11,11 +9,8 @@ import {
 import {
   getCashbookAccounts,
   getCashbookCategories,
-  ATTACHMENT_ACCEPT,
-  validateAttachment,
 } from "./purchase-request.service";
-import AttachmentFileName from "../../components/AttachmentFileName";
-import AttachmentPreviewModal from "../../components/AttachmentPreviewModal";
+import AttachmentMultiInput from "../../components/AttachmentMultiInput";
 import notify from "../../lib/notify";
 import { formatCurrencyInput } from "../../utils/currency";
 
@@ -49,9 +44,7 @@ const PurchaseRequestPaymentModal = ({
   const [transactionDate, setTransactionDate] = useState(formatToday());
   const [additionalCost, setAdditionalCost] = useState("");
 
-  const [attachmentFile, setAttachmentFile] = useState(null);
-  const [attachmentPreview, setAttachmentPreview] = useState("");
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const [attachmentFiles, setAttachmentFiles] = useState([]);
 
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -139,8 +132,7 @@ const PurchaseRequestPaymentModal = ({
     setIdCategory("");
     setTransactionDate(formatToday());
     setAdditionalCost("");
-    setAttachmentFile(null);
-    setAttachmentPreview("");
+    setAttachmentFiles([]);
 
     setTransactionDescription(
       `Pengajuan ${
@@ -154,63 +146,7 @@ const PurchaseRequestPaymentModal = ({
     setReferenceNumber(data?.request_number || String(data?.id_request || ""));
   }, [open, data]);
 
-  /* ==========================
-     CLEANUP PREVIEW
-  ========================== */
-
-  useEffect(() => {
-    return () => {
-      if (attachmentPreview) {
-        URL.revokeObjectURL(attachmentPreview);
-      }
-    };
-  }, [attachmentPreview]);
-
   if (!open || !data) return null;
-
-  /* ==========================
-     ATTACHMENT
-  ========================== */
-
-  const handleUpload = ({ target }) => {
-    const file = target.files?.[0];
-
-    if (!file) return;
-
-    const error = validateAttachment(file);
-
-    if (error) {
-      notify.fire({
-        icon: "warning",
-        title: "File Tidak Valid",
-        text: error,
-      });
-
-      target.value = "";
-      return;
-    }
-
-    if (attachmentPreview) {
-      URL.revokeObjectURL(attachmentPreview);
-    }
-
-    setAttachmentFile(file);
-    // Preview thumbnail hanya untuk gambar
-    setAttachmentPreview(
-      file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
-    );
-
-    target.value = "";
-  };
-
-  const handleRemoveAttachment = () => {
-    if (attachmentPreview) {
-      URL.revokeObjectURL(attachmentPreview);
-    }
-
-    setAttachmentFile(null);
-    setAttachmentPreview("");
-  };
 
   /* ==========================
      SUBMIT
@@ -290,7 +226,7 @@ const PurchaseRequestPaymentModal = ({
       amount: totalAmount,
       transaction_description: transactionDescription.trim(),
       reference_number: referenceNumber.trim(),
-      attachment_file: attachmentFile,
+      attachment_files: attachmentFiles,
     };
 
     onSubmit(paymentData);
@@ -543,83 +479,12 @@ const PurchaseRequestPaymentModal = ({
                 </span>
               </label>
 
-              {!attachmentFile ? (
-                <label className="flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-full border-dashed transition hover:border-primary hover:bg-primary/5 glass-button">
-                  <input
-                    hidden
-                    type="file"
-                    accept={ATTACHMENT_ACCEPT}
-                    onChange={handleUpload}
-                    disabled={formLoading}
-                  />
-
-                  <ImagePlus size={18} className="text-primary" />
-
-                  <span className="text-sm font-medium text-ink">
-                    Pilih Bukti (Gambar / PDF)
-                  </span>
-                </label>
-              ) : (
-                <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                  <div className="flex items-center gap-3">
-                    {attachmentPreview ? (
-                      <img
-                        src={attachmentPreview}
-                        alt="Bukti pembayaran"
-                        className="h-14 w-14 shrink-0 rounded-lg border border-primary-200 object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center glass-inset rounded-2xl">
-                        <FileText size={24} className="text-primary" />
-                      </div>
-                    )}
-
-                    <div className="min-w-0 flex-1">
-                      <AttachmentFileName
-                        name={attachmentFile.name}
-                        onClick={() => setPreviewOpen(true)}
-                      />
-
-                      <p className="text-xs text-neutral-600">
-                        {attachmentFile.size >= 1024 * 1024
-                          ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
-                          : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
-                      </p>
-
-                      {uploadProgress !== null && (
-                        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-primary-200">
-                          <div
-                            className="h-full bg-primary transition-all"
-                            style={{ width: `${uploadProgress}%` }}
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex gap-2">
-                      <label className="cursor-pointer rounded-full px-2.5 py-1 text-xs text-ink transition hover:bg-white glass-button">
-                        Ganti
-                        <input
-                          hidden
-                          type="file"
-                          accept={ATTACHMENT_ACCEPT}
-                          onChange={handleUpload}
-                          disabled={formLoading}
-                        />
-                      </label>
-
-                      <button
-                        type="button"
-                        onClick={handleRemoveAttachment}
-                        disabled={formLoading}
-                        className="rounded-full px-2.5 py-1 text-xs text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 glass-button"
-                      >
-                        Hapus
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <AttachmentMultiInput
+                files={attachmentFiles}
+                onChange={setAttachmentFiles}
+                uploadProgress={uploadProgress}
+                disabled={formLoading}
+              />
             </div>
           </div>
         </div>
@@ -659,12 +524,6 @@ const PurchaseRequestPaymentModal = ({
           </button>
         </div>
       </div>
-
-      <AttachmentPreviewModal
-        open={previewOpen}
-        file={attachmentFile}
-        onClose={() => setPreviewOpen(false)}
-      />
     </div>
   );
 };

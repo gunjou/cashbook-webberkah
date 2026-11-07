@@ -1,5 +1,4 @@
 import api from "../../api/axios";
-import cdn from "../../api/cdn";
 
 /* ==========================
    PURCHASE REQUEST
@@ -77,6 +76,7 @@ export const ATTACHMENT_IMAGE_TYPES = [
 ];
 export const ATTACHMENT_PDF_TYPE = "application/pdf";
 export const ATTACHMENT_MAX_SIZE = 10 * 1024 * 1024; // 10 MB
+export const ATTACHMENT_MAX_FILES = 10;
 export const ATTACHMENT_ACCEPT = [
   ...ATTACHMENT_IMAGE_TYPES,
   ATTACHMENT_PDF_TYPE,
@@ -102,43 +102,27 @@ export const validateAttachment = (file) => {
   return null;
 };
 
-// Upload ke CDN: image -> endpoint image cashbook, PDF -> endpoint document.
-// Upload CDN ±4 detik/MB, jadi timeout dibuat longgar (default axios cdn 30s
-// membuat file > ~7 MB selalu gagal).
-export const uploadAttachment = async (file, { onProgress } = {}) => {
-  const error = validateAttachment(file);
-  if (error) throw new Error(error);
-
+// Backend menggabungkan file sesuai urutan menjadi 1 PDF, lalu menguploadnya ke
+// CDN. Timeout dibuat longgar karena mencakup upload, merge, dan upload ke CDN.
+export const uploadAttachments = async (files, { onProgress } = {}) => {
   const formData = new FormData();
-  formData.append("file", file);
-
-  const documentUrl = process.env.REACT_APP_CDN_DOCUMENT_UPLOAD_URL;
-  const documentKey = process.env.REACT_APP_CDN_DOCUMENT_API_KEY;
-
-  const usingDocumentEndpoint = isPdfFile(file) && documentUrl && documentKey;
-
-  const url = usingDocumentEndpoint
-    ? documentUrl
-    : `/api/upload/${process.env.REACT_APP_CDN_SERVICE_NAME}/${process.env.REACT_APP_CDN_CATEGORY}`;
+  files.forEach((file) => formData.append("files", file));
 
   try {
-    const response = await cdn.post(url, formData, {
-      timeout: 180000,
-      headers: usingDocumentEndpoint ? { "X-API-KEY": documentKey } : {},
-      onUploadProgress: (event) => {
-        if (onProgress && event.total) {
-          onProgress(Math.round((event.loaded / event.total) * 100));
-        }
+    const response = await api.post(
+      "/cashbook/transactions/attachments",
+      formData,
+      {
+        timeout: 300000,
+        onUploadProgress: (event) => {
+          if (onProgress && event.total) {
+            onProgress(Math.round((event.loaded / event.total) * 100));
+          }
+        },
       },
-    });
+    );
 
-    const result = response.data;
-
-    if (!result?.status || !result?.url) {
-      throw new Error(result?.message || "Upload bukti pembayaran gagal.");
-    }
-
-    return result;
+    return response.data.data.attachment_path;
   } catch (err) {
     if (err.code === "ECONNABORTED") {
       throw new Error(
@@ -146,13 +130,8 @@ export const uploadAttachment = async (file, { onProgress } = {}) => {
       );
     }
 
-    const message =
-      err.response?.data?.message || err.response?.data?.detail;
-
     throw new Error(
-      message
-        ? `Upload bukti pembayaran gagal: ${message}`
-        : err.message || "Upload bukti pembayaran gagal.",
+      err.response?.data?.message || err.message || "Upload bukti pembayaran gagal.",
     );
   }
 };

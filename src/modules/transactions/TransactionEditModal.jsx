@@ -3,16 +3,13 @@ import { useEffect, useState } from "react";
 import {
   ArrowDownLeft,
   ArrowUpRight,
-  FileText,
-  ImagePlus,
   Loader2,
   Save,
   X,
 } from "lucide-react";
 
 import Loading from "../../components/Loading";
-import AttachmentFileName from "../../components/AttachmentFileName";
-import AttachmentPreviewModal from "../../components/AttachmentPreviewModal";
+import AttachmentMultiInput from "../../components/AttachmentMultiInput";
 
 import {
   getAccountDropdown,
@@ -21,13 +18,7 @@ import {
   updateTransaction,
 } from "./transaction.service";
 
-// Upload & validasi lampiran (gambar/PDF) memakai helper yang sama dengan
-// pembayaran pengajuan: PDF diarahkan ke endpoint document CDN.
-import {
-  ATTACHMENT_ACCEPT,
-  uploadAttachment,
-  validateAttachment,
-} from "../purchase-requests/purchase-request.service";
+import { uploadAttachments } from "../purchase-requests/purchase-request.service";
 
 import { formatCurrencyInput, parseCurrencyInput } from "../../utils/currency";
 import notify from "../../lib/notify";
@@ -47,9 +38,6 @@ const initialForm = {
   attachment_url: "",
 };
 
-// Lampiran lama tanpa ekstensi .pdf tetap diperlakukan sebagai gambar.
-const isPdfUrl = (url = "") => /\.pdf$/i.test(url.split(/[?#]/)[0]);
-
 const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
   /* ==========================
       State
@@ -64,12 +52,9 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
 
-  const [attachmentFile, setAttachmentFile] = useState(null);
-  const [attachmentPreview, setAttachmentPreview] = useState("");
-  const [attachmentName, setAttachmentName] = useState("");
+  const [attachmentFiles, setAttachmentFiles] = useState([]);
 
   const [uploadProgress, setUploadProgress] = useState(null);
-  const [previewOpen, setPreviewOpen] = useState(false);
 
   /* ==========================
       Helper
@@ -119,14 +104,6 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, idTransaction]);
 
-  useEffect(() => {
-    return () => {
-      if (attachmentPreview) {
-        URL.revokeObjectURL(attachmentPreview);
-      }
-    };
-  }, [attachmentPreview]);
-
   /* ==========================
     API
   ========================== */
@@ -155,17 +132,6 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
         attachment_url: detail.attachment_url || "",
       });
 
-      setAttachmentPreview(
-        detail.attachment_url && !isPdfUrl(detail.attachment_url)
-          ? detail.attachment_url
-          : "",
-      );
-
-      if (detail.attachment_url) {
-        const fileName = detail.attachment_url.split("/").pop();
-
-        setAttachmentName(fileName);
-      }
     } finally {
       setLoading(false);
     }
@@ -223,58 +189,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
     }
   };
 
-  const handleUpload = ({ target }) => {
-    const file = target.files?.[0];
-
-    if (!file) return;
-
-    const error = validateAttachment(file);
-
-    if (error) {
-      notify.fire({
-        icon: "warning",
-        title: "File Tidak Valid",
-        text: error,
-      });
-
-      target.value = "";
-      return;
-    }
-
-    if (attachmentPreview.startsWith("blob:")) {
-      URL.revokeObjectURL(attachmentPreview);
-    }
-
-    setAttachmentFile(file);
-
-    // Preview thumbnail hanya untuk gambar
-    setAttachmentPreview(
-      file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
-    );
-
-    setAttachmentName(file.name);
-
-    target.value = "";
-  };
-
-  const handleRemoveAttachment = () => {
-    if (attachmentPreview && attachmentPreview.startsWith("blob:")) {
-      URL.revokeObjectURL(attachmentPreview);
-    }
-
-    setAttachmentFile(null);
-    setAttachmentPreview("");
-    setAttachmentName("");
-
-    setForm((prev) => ({
-      ...prev,
-      attachment_url: "",
-    }));
-  };
-
   //   const resetForm = () => {
-  //     handleRemoveAttachment();
-
   //     setForm(initialForm);
   //     setErrors({});
   //   };
@@ -287,11 +202,10 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
 
       let attachmentUrl = form.attachment_url;
 
-      if (attachmentFile) {
-        const result = await uploadAttachment(attachmentFile, {
+      if (attachmentFiles.length) {
+        attachmentUrl = await uploadAttachments(attachmentFiles, {
           onProgress: setUploadProgress,
         });
-        attachmentUrl = result.url;
       }
 
       await updateTransaction(idTransaction, {
@@ -325,13 +239,7 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
   };
 
   const handleClose = () => {
-    if (attachmentPreview && attachmentPreview.startsWith("blob:")) {
-      URL.revokeObjectURL(attachmentPreview);
-    }
-
-    setAttachmentFile(null);
-    setAttachmentPreview("");
-    setAttachmentName("");
+    setAttachmentFiles([]);
 
     setForm(initialForm);
     setErrors({});
@@ -614,88 +522,16 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
                       </span>
                     </label>
 
-                    {!attachmentFile && !form.attachment_url ? (
-                      <label className="flex h-[52px] cursor-pointer items-center justify-center gap-2 rounded-full border-dashed transition hover:border-primary hover:bg-primary/5 glass-button">
-                        <input
-                          hidden
-                          type="file"
-                          accept={ATTACHMENT_ACCEPT}
-                          onChange={handleUpload}
-                        />
-
-                        <ImagePlus size={18} className="text-primary" />
-
-                        <span className="text-sm font-medium">
-                          Pilih Bukti (Gambar / PDF)
-                        </span>
-                      </label>
-                    ) : (
-                      <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
-                        <div className="flex items-center gap-3">
-                          {attachmentPreview ? (
-                            <img
-                              src={attachmentPreview}
-                              alt="Attachment"
-                              className="h-12 w-12 shrink-0 rounded-lg border border-primary-200 object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center glass-inset rounded-2xl">
-                              <FileText size={22} className="text-primary" />
-                            </div>
-                          )}
-
-                          <div className="min-w-0 flex-1">
-                            <AttachmentFileName
-                              name={attachmentFile ? attachmentFile.name : attachmentName}
-                              onClick={() => setPreviewOpen(true)}
-                            />
-
-                            <p className="text-xs text-neutral-600">
-                              {attachmentFile ? (
-                                <p className="text-xs text-neutral-600">
-                                  {attachmentFile.size >= 1024 * 1024
-                                ? `${(attachmentFile.size / 1024 / 1024).toFixed(1)} MB`
-                                : `${(attachmentFile.size / 1024).toFixed(1)} KB`}
-                                </p>
-                              ) : (
-                                <p className="text-xs text-neutral-600">
-                                  File tersimpan
-                                </p>
-                              )}
-                            </p>
-
-                            {uploadProgress !== null && (
-                              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-primary-200">
-                                <div
-                                  className="h-full bg-primary transition-all"
-                                  style={{ width: `${uploadProgress}%` }}
-                                />
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="flex gap-2">
-                            <label className="cursor-pointer rounded-full px-2.5 py-1 text-xs transition hover:bg-white glass-button">
-                              Ganti
-                              <input
-                                hidden
-                                type="file"
-                                accept={ATTACHMENT_ACCEPT}
-                                onChange={handleUpload}
-                              />
-                            </label>
-
-                            <button
-                              type="button"
-                              onClick={handleRemoveAttachment}
-                              className="rounded-full px-2.5 py-1 text-xs text-red-600 transition hover:bg-red-50 glass-button"
-                            >
-                              Hapus
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <AttachmentMultiInput
+                      files={attachmentFiles}
+                      onChange={setAttachmentFiles}
+                      savedUrl={form.attachment_url}
+                      onRemoveSaved={() =>
+                        setForm((prev) => ({ ...prev, attachment_url: "" }))
+                      }
+                      uploadProgress={uploadProgress}
+                      disabled={saving}
+                    />
                   </div>
                 </div>
 
@@ -745,13 +581,6 @@ const TransactionEditModal = ({ open, idTransaction, onClose, onSuccess }) => {
           </div>
         </form>
       </div>
-
-      <AttachmentPreviewModal
-        open={previewOpen}
-        file={attachmentFile}
-        url={form.attachment_url}
-        onClose={() => setPreviewOpen(false)}
-      />
     </div>
   );
 };

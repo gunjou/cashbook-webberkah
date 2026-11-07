@@ -13,7 +13,7 @@ import {
   getPurchaseRequestHistory,
   getPurchaseRequests,
   payPurchaseRequest,
-  uploadAttachment,
+  uploadAttachments,
 } from "./purchase-request.service";
 import PurchaseRequestDetailModal from "./PurchaseRequestDetailModal";
 import PurchaseRequestAttachmentModal from "./PurchaseRequestAttachmentModal";
@@ -300,15 +300,12 @@ const PurchaseRequestsPage = () => {
        UPLOAD BUKTI PEMBAYARAN
     ========================== */
 
-      if (paymentData.attachment_file) {
+      if (paymentData.attachment_files.length) {
         setUploadProgress(0);
 
-        const uploadResponse = await uploadAttachment(
-          paymentData.attachment_file,
-          { onProgress: setUploadProgress },
-        );
-
-        attachmentUrl = uploadResponse.url;
+        attachmentUrl = await uploadAttachments(paymentData.attachment_files, {
+          onProgress: setUploadProgress,
+        });
       }
 
       /* ==========================
